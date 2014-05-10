@@ -1,0 +1,208 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial
+}
+
+body {
+  background: white;
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2 {
+  font-family: "HelveticaNeueMedium", "HelveticaNeue-Medium", "Helvetica Neue Medium", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial;
+  font-weight: normal;
+  font-size: 18px;
+}
+
+#page {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44%;
+  margin-top: -189px;
+}
+
+@media only screen and (max-height: 455px),
+       only screen and (max-width: 578px) {
+  #page {
+    top: 11px;
+    margin-top: 0;
+  }
+}
+
+header {
+  background: url('/images/header.png') no-repeat right top,
+              url('/images/headerX.png') repeat-x;
+  height: 125px;
+  width: 50%;
+  margin-left: -40px;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+       only screen and (min--moz-device-pixel-ratio: 1.5),
+       only screen and (min-device-pixel-ratio: 1.5)
+{
+  header {
+    background: url('/images/header@2x.png') no-repeat right top,
+                url('/images/headerX@2x.png') repeat-x;
+    background-size: 50px 100%, 100% 100%;
+  }
+}
+
+header h1, header p {
+  position: absolute;
+  left: 50%;
+  margin-left: -265px;
+  top: 30px;
+}
+
+header p {
+  top: 56px;
+}
+
+header h1 {
+  color: #fff;
+}
+
+header p {
+  color: #B8B8B8;
+}
+
+#contact {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  margin-left: 125px;
+}
+
+#contact a {
+  display: inline-block;
+  margin-right: 4px;
+}
+
+#contact a,
+#contact a svg {
+  width: 21px;
+  height: 18px;
+  cursor: pointer;
+}
+
+#contact a svg path {
+  fill: #B8B8B8;
+}
+
+#contact a:hover svg path {
+  fill: #121301;
+}
+
+#contact #twitter {
+
+}
+
+#contact #email {
+
+}
+
+#content {
+  position: absolute;
+  left: 50%;
+  margin-top: 20px;
+  margin-left: -265px;
+  width: 530px;
+  overflow: hidden;
+}
+
+section {
+  float: left;
+  width: 360px;
+  margin-bottom: 30px;
+}
+
+section#openSource,
+section#work {
+  float: right;
+  width: 140px;
+}
+
+section h2 {
+  color: #121301;
+  height: 25px;
+}
+
+section ul {
+  color: #7B7B7B;
+  line-height: 18px;
+  list-style: none;
+  padding-bottom: 4px;
+}
+
+section ul a {
+  color: #7B7B7B;
+  text-decoration: none;
+}
+
+section ul a:hover {
+  color: #121301;
+}
+
+section a.more {
+  font-size: 13px;
+  text-decoration: none;
+}
+
+section a.more svg {
+  width: 5px;
+  height: 8px;
+  margin-left: 6px;
+}
+
+section#articles a.more {
+  color: #27A0DB;
+}
+section#articles a.more .arrow {
+  fill: #27A0DB;
+}
+section#openSource a.more {
+  color: #C459F8;
+}
+section#openSource a.more .arrow {
+  fill: #C459F8;
+}
+section#experiments a.more {
+  color: #DD1223;
+}
+section#experiments a.more .arrow {
+  fill: #DD1223;
+}
+
+@media only screen and (max-width: 578px) {
+  header {
+    width: 289px;
+  }
+  header h1, header p {
+    left: 24px;
+    margin-left: 0;
+  }
+  #contact {
+    left: 252px;
+    margin-left: 0;
+  }
+  #content {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    margin-left: 0;
+    width: auto;
+  }
+  section,
+  section#openSource,
+  section#work {
+    width: 100%;
+    float: left;
+    clear: both;
+  }
+}
+
+
