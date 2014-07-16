@@ -18,44 +18,39 @@ h1, h2 {
 
 #page {
   position: absolute;
+  top: 48%;
   left: 0;
   right: 0;
-  top: 44%;
-  margin-top: -189px;
+  margin-top: -170px;
+  height: 340px;
 }
 
-@media only screen and (max-height: 455px),
+@media only screen and (max-height: 386px),
        only screen and (max-width: 578px) {
   #page {
-    top: 11px;
+    top: 14px;
     margin-top: 0;
   }
 }
 
 header {
-  background: url('/images/header.png') no-repeat right top,
-              url('/images/headerX.png') repeat-x;
-  height: 125px;
-  width: 50%;
-  margin-left: -40px;
+  position: absolute;
+  top: 48%;
+  right: 58%;
+  margin-top: -100px;
+  width: 240px;
+  text-align: center;
+  padding-top: 98px;
+  background: url(/images/logo.png) no-repeat center top;
+  background-size: 86px 86px;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
        only screen and (min--moz-device-pixel-ratio: 1.5),
-       only screen and (min-device-pixel-ratio: 1.5)
-{
+       only screen and (min-device-pixel-ratio: 1.5) {
   header {
-    background: url('/images/header@2x.png') no-repeat right top,
-                url('/images/headerX@2x.png') repeat-x;
-    background-size: 50px 100%, 100% 100%;
+    background-image: url(/images/logo@2x.png);
   }
-}
-
-header h1, header p {
-  position: absolute;
-  left: 50%;
-  margin-left: -265px;
-  top: 30px;
 }
 
 header p {
@@ -63,18 +58,16 @@ header p {
 }
 
 header h1 {
-  color: #fff;
+  color: #121301;
 }
 
 header p {
-  color: #B8B8B8;
+  padding-top: 3px;
+  color: #7B7B7B;
 }
 
 #contact {
-  position: absolute;
-  top: 54px;
-  left: 50%;
-  margin-left: 125px;
+  padding-top: 10px;
 }
 
 #contact a {
@@ -90,40 +83,21 @@ header p {
 }
 
 #contact a svg path {
-  fill: #B8B8B8;
+  fill: #7B7B7B;
 }
 
 #contact a:hover svg path {
   fill: #121301;
 }
 
-#contact #twitter {
-
-}
-
-#contact #email {
-
-}
-
 #content {
   position: absolute;
   left: 50%;
-  margin-top: 20px;
-  margin-left: -265px;
-  width: 530px;
-  overflow: hidden;
+  width: 50%;
 }
 
 section {
-  float: left;
-  width: 360px;
   margin-bottom: 30px;
-}
-
-section#openSource,
-section#work {
-  float: right;
-  width: 140px;
 }
 
 section h2 {
@@ -179,7 +153,12 @@ section#experiments a.more .arrow {
 
 @media only screen and (max-width: 578px) {
   header {
-    width: 289px;
+    position: static;
+    top: 10px;
+    padding-bottom: 16px;
+    margin: 10px 24px 16px;
+    width: auto;
+    border-bottom: 1px solid hsl(0, 0%, 90%);
   }
   header h1, header p {
     left: 24px;
