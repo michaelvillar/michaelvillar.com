@@ -40,17 +40,10 @@ header {
   margin-top: -100px;
   width: 240px;
   text-align: center;
-  padding-top: 98px;
-  background: url(/images/logo.png) no-repeat center top;
-  background-size: 86px 86px;
 }
 
-@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
-       only screen and (min--moz-device-pixel-ratio: 1.5),
-       only screen and (min-device-pixel-ratio: 1.5) {
-  header {
-    background-image: url(/images/logo@2x.png);
-  }
+header #logo {
+  margin-bottom: 14px;
 }
 
 header p {
