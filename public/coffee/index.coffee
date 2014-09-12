@@ -14,7 +14,7 @@ setTimeout ->
   animating = false
 
   # Logo animation
-  init = ->
+  animateLogo = ->
     animating = true
 
     m.css(translateY: 0, scale: 0.5)
@@ -56,6 +56,45 @@ setTimeout ->
     setTimeout ->
       animating = false
     , (400 + 900) * speed
+
+  intro = ->
+    animateLogo()
+
+    setTimeout ->
+      # For mobile
+      document.querySelector('header').classList.add('visible')
+    , 900 * speed
+
+    selector = 'header h1, header p, header #contact'
+    headerEls = Array.prototype.map.call(document.querySelectorAll(selector), (el) -> dynamic(el))
+    delay = 900 * speed
+    for el in headerEls
+      el.css(opacity: 0, translateY: -10)
+      el.delay(delay).to({
+        opacity: 1,
+        translateY: 0
+      }, {
+        type: dynamic.Spring,
+        duration: 800 * speed,
+        friction: 300,
+        frequency: 7
+      }).start()
+      delay += 50
+
+    selector = '#content section'
+    contentEls = Array.prototype.map.call(document.querySelectorAll(selector), (el) -> dynamic(el))
+    for el in contentEls
+      el.css(opacity: 0, translateX: -50)
+      el.delay(delay).to({
+        opacity: 1,
+        translateX: 0
+      }, {
+        type: dynamic.Spring,
+        duration: 800 * speed,
+        friction: 300,
+        frequency: 7
+      }).start()
+      delay += 50
 
   # Interactions
   explode = ->
@@ -113,5 +152,5 @@ setTimeout ->
   logoEl.addEventListener 'mouseout', ->
     collapse()
 
-  init()
+  intro()
 , 1

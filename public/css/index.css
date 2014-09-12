@@ -162,7 +162,12 @@ section#experiments a.more .arrow {
     padding-bottom: 16px;
     margin: 10px 24px 16px;
     width: auto;
-    border-bottom: 1px solid hsl(0, 0%, 90%);
+    border-bottom: 1px solid hsla(0, 0%, 90%, 0);
+    -webkit-transition: border-bottom ease-in-out 200ms;
+    transition: border-bottom ease-in-out 200ms;
+  }
+  header.visible {
+    border-bottom-color: hsla(0, 0%, 90%, 1);
   }
   header #logo {
     top: -33px;
