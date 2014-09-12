@@ -40,10 +40,20 @@ header {
   margin-top: -100px;
   width: 240px;
   text-align: center;
+  padding-top: 99px;
 }
 
 header #logo {
+  position: absolute;
+  top: -25%;
+  left: 50%;
+  margin-left: -84px;
   margin-bottom: 14px;
+}
+
+header #logo * {
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
 }
 
 header p {
