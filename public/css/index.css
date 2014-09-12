@@ -45,7 +45,7 @@ header {
 
 header #logo {
   position: absolute;
-  top: -25%;
+  top: -47px;
   left: 50%;
   margin-left: -84px;
   margin-bottom: 14px;
@@ -163,6 +163,10 @@ section#experiments a.more .arrow {
     width: auto;
     border-bottom: 1px solid hsl(0, 0%, 90%);
   }
+  header #logo {
+    top: -33px;
+  }
+
   header h1, header p {
     left: 24px;
     margin-left: 0;
