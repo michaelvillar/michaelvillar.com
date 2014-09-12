@@ -51,7 +51,7 @@ header #logo {
   margin-bottom: 14px;
 }
 
-header #logo * {
+header #logo g {
   pointer-events: none;
   -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;

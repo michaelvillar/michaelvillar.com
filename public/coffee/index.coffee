@@ -11,10 +11,16 @@ setTimeout ->
   maskTopTop = dynamic(document.querySelector('#logo #mask-top .top'))
   maskBottomBottom = dynamic(document.querySelector('#logo #mask-bottom .bottom'))
 
+  support = !/Firefox\//.test(window.navigator.userAgent)
   animating = false
 
   # Logo animation
   animateLogo = ->
+    if !support
+      for el in document.querySelectorAll('#logo g')
+        el.removeAttribute('mask')
+      return
+
     animating = true
 
     m.css(translateY: 0, scale: 0.5)
@@ -60,14 +66,18 @@ setTimeout ->
   intro = ->
     animateLogo()
 
+    if !support
+      delay = 0
+    else
+      delay = 900 * speed
+
     setTimeout ->
       # For mobile
       document.querySelector('header').classList.add('visible')
-    , 900 * speed
+    , delay
 
     selector = 'header h1, header p, header #contact'
     headerEls = Array.prototype.map.call(document.querySelectorAll(selector), (el) -> dynamic(el))
-    delay = 900 * speed
     for el in headerEls
       el.css(opacity: 0, translateY: -10)
       el.delay(delay).to({
