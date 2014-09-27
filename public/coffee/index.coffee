@@ -1,6 +1,7 @@
 setTimeout ->
   speed = 1
 
+  page = document.querySelector('#page')
   logoEl = document.querySelector('#logo')
   m = dynamic(document.querySelector('g .m'))
   v = dynamic(document.querySelector('g .v'))
@@ -105,6 +106,8 @@ setTimeout ->
         frequency: 7
       }).start()
       delay += 50
+
+    page.style.visibility = 'visible'
 
   # Interactions
   explode = ->
