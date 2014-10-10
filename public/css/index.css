@@ -18,14 +18,14 @@ h1, h2 {
 
 #page {
   position: absolute;
-  top: 48%;
+  top: 50%;
   left: 0;
   right: 0;
-  margin-top: -205px;
-  height: 410px;
+  margin-top: -255px;
+  height: 510px;
 }
 
-@media only screen and (max-height: 386px),
+@media only screen and (max-height: 560px),
        only screen and (max-width: 578px) {
   #page {
     top: 14px;
