@@ -49,34 +49,80 @@
   </header>
   <section>
     <div class="video">
-      <h3>07-Button touch</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/07-button-touch/button-touch.mov" width="400" height="300"></video>
+      <h3>08-Photo Loading</h3>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/08-photo-loading/photo-loading.mp4" width="400" height="300"></video>
+    </div>
+    <div class="video">
+      <h3>07-Button Touch</h3>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/07-button-touch/button-touch.mov" width="400" height="300"></video>
     </div>
     <div class="video">
       <h3>06-Volume</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/06-volume/volume.mov" width="400" height="300"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/06-volume/volume.mov" width="400" height="300"></video>
     </div>
     <div class="video">
       <h3>05-Add</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/05-add/add.mov" width="320" height="568"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/05-add/add.mov" width="320" height="568"></video>
     </div>
     <div class="video">
       <h3>04-Newton Cradle</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/04-newton-cradle/newton-cradle.mov" width="400" height="300"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/04-newton-cradle/newton-cradle.mov" width="400" height="300"></video>
     </div>
     <div class="video">
       <h3>03-Search Icon</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/03-search-icon/search-icon.mov" width="400" height="300"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/03-search-icon/search-icon.mov" width="400" height="300"></video>
     </div>
     <div class="video">
       <h3>02-Graph</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/02-graph/graph.mov" width="400" height="300"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/02-graph/graph.mov" width="400" height="300"></video>
     </div>
     <div class="video">
       <h3>01-Spinner</h3>
-      <video autoplay loop src="http://michaelvillar.s3.amazonaws.com/motion/01-spinner/spinner.mov" width="400" height="300"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/01-spinner/spinner.mov" width="400" height="300"></video>
     </div>
   </section>
+  <script>
+  function getOffset(el, property) {
+    value = 0;
+    while(el != null) {
+      value += el[property];
+      el = el.offsetParent;
+    }
+    return value;
+  }
+  function isVisible(el) {
+    // get offset
+    var y = getOffset(el, 'offsetTop');
+    // convert to screen coordinate
+    y = y - window.scrollY;
+
+    var height = el.clientHeight;
+    var windowHeight = window.innerHeight;
+
+    return (y + height > 0 && y < windowHeight);
+  }
+
+  // only play videos on screen
+  function check() {
+    for(var i=0;i<els.length;i++) {
+      var el = els[i];
+      if(isVisible(el)) {
+        el.play();
+      }
+      else {
+        el.pause();
+      }
+    }
+  }
+
+  var els = document.querySelectorAll('video');
+  var scrollTimeout;
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    setTimeout(check, 50);
+  });
+  check();
+  </script>
   <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
