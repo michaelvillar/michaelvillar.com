@@ -53,7 +53,7 @@
     <div class="video">
       <h2>15-Safari Link</h2>
       <p>Instead of showing the link url in the status bar, here is a concept to show it in the address bar.</p>
-      <video loop preload="none" src="http://michaelvillar.s3.amazonaws.com/motion/link.mp4" width="740" height="180"></video>
+      <video loop src="http://michaelvillar.s3.amazonaws.com/motion/link.mp4" width="740" height="180"></video>
     </div>
     <div class="video">
       <h2>14-Counter</h2>
@@ -168,7 +168,7 @@
       clearTimeout(scrollTimeout);
       setTimeout(check, 50);
     });
-    window.addEventListener("load", function() {
+    window.addEventListener("DOMContentLoaded", function() {
       check();
     });
   }
