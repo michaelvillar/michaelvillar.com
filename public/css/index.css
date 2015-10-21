@@ -21,8 +21,8 @@ h1, h2 {
   top: 50%;
   left: 0;
   right: 0;
-  margin-top: -255px;
-  height: 510px;
+  margin-top: -280px;
+  height: 560px;
 }
 
 @media only screen and (max-height: 560px),
