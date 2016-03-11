@@ -1,19 +1,22 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Code+Pro:400,600);
+
 * {
   margin: 0;
   padding: 0;
-  font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial
+  font-family: "Source Sans Pro", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial;
 }
 
 body {
-  background: white;
-  font-size: 17px;
+  background: #101214;
+  font-size: 18px;
   -webkit-text-size-adjust: 100%;
+  color: #7A7C80;
 }
 
 h1, h2 {
-  font-family: "HelveticaNeueMedium", "HelveticaNeue-Medium", "Helvetica Neue Medium", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial;
   font-weight: normal;
-  font-size: 22px;
+  font-size: 25px;
+  color: white;
 }
 
 #page {
@@ -35,38 +38,22 @@ h1, h2 {
 
 header {
   position: absolute;
-  top: 48%;
+  top: 0;
+  bottom: 0;
   right: 58%;
-  margin-top: -100px;
   width: 240px;
-  text-align: center;
-  padding-top: 99px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 header #logo {
-  position: absolute;
-  top: -67px;
-  left: 50%;
-  margin-left: -102px;
-}
-
-header #logo g {
-  pointer-events: none;
-  -webkit-transform-origin: 50% 50%;
-  transform-origin: 50% 50%;
+  margin-bottom: 10px;
 }
 
 header p {
-  top: 67px;
-}
-
-header h1 {
-  color: #121301;
-}
-
-header p {
-  padding-top: 4px;
-  color: #7B7B7B;
+  padding-top: 2px;
 }
 
 #contact {
@@ -86,11 +73,11 @@ header p {
 }
 
 #contact a svg path {
-  fill: #7B7B7B;
+  fill: #7A7C80;
 }
 
 #contact a:hover svg path {
-  fill: #121301;
+  fill: white;
 }
 
 #content {
@@ -104,28 +91,27 @@ section {
 }
 
 section h2 {
-  color: #121301;
   height: 30px;
 }
 
 section ul {
-  color: #7B7B7B;
   line-height: 22px;
   list-style: none;
+  padding-top: 2px;
   padding-bottom: 5px;
 }
 
 section ul a {
-  color: #7B7B7B;
+  color: #7A7C80;
   text-decoration: none;
 }
 
 section ul a:hover {
-  color: #121301;
+  color: white;
 }
 
 section a.more {
-  font-size: 15px;
+  font-size: 16px;
   text-decoration: none;
 }
 
@@ -135,23 +121,11 @@ section a.more svg {
   margin-left: 7px;
 }
 
-section#articles a.more {
-  color: #27A0DB;
+section a.more {
+  color: #B0B1B3;
 }
-section#articles a.more .arrow {
-  fill: #27A0DB;
-}
-section#openSource a.more {
-  color: #C459F8;
-}
-section#openSource a.more .arrow {
-  fill: #C459F8;
-}
-section#experiments a.more {
-  color: #DD1223;
-}
-section#experiments a.more .arrow {
-  fill: #DD1223;
+section a.more .arrow {
+  fill: #B0B1B3;
 }
 
 @media only screen and (max-width: 578px) {
@@ -161,12 +135,6 @@ section#experiments a.more .arrow {
     padding-bottom: 16px;
     margin: 40px 24px 16px;
     width: auto;
-    border-bottom: 1px solid hsla(0, 0%, 90%, 0);
-    -webkit-transition: border-bottom ease-in-out 200ms;
-    transition: border-bottom ease-in-out 200ms;
-  }
-  header.visible {
-    border-bottom-color: hsla(0, 0%, 90%, 1);
   }
   header #logo {
     top: -33px;
@@ -195,5 +163,3 @@ section#experiments a.more .arrow {
     clear: both;
   }
 }
-
-
