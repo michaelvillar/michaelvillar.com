@@ -176,6 +176,7 @@ section a.more .arrow {
   bottom: 0;
   right: 0;
   background: #101214;
+  pointer-events: none;
 }
 
 #stripes {

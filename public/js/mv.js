@@ -60,6 +60,9 @@ function animateStripes(delayEnd=false) {
         lineEl.setAttribute('data-black', true);
       } else {
         delay = Math.random() * 300;
+        if (delayEnd) {
+          delay += (i - 200) * 3;
+        }
       }
 
       dynamics.setTimeout(function() {
@@ -98,14 +101,52 @@ function animateStripes(delayEnd=false) {
   return stripes;
 }
 
+let contentEls = document.querySelectorAll('#logo, header > h1, header > p, #contact > *, section h2, section ul li, section > a');
+function hideContent() {
+  for (let i = 0; i < contentEls.length; i++) {
+    let el = contentEls[i];
+    el.style.visibility = 'hidden';
+  }
+}
+
+function showContent() {
+  for (let i = 0; i < contentEls.length; i++) {
+    let el = contentEls[i];
+    let d = 100 + i * 10 + Math.random() * 200;
+    let transform = {
+      translateX: Math.random() * 10 - 5,
+      translateY: Math.random() * 2 - 1,
+    };
+    dynamics.css(el, transform);
+    dynamics.setTimeout(function() {
+      dynamics.css(el, {
+        visibility: 'visible',
+      });
+    }, d);
+    dynamics.setTimeout(function() {
+      dynamics.css(el, {
+        translateX: transform.translateX / -5,
+        translateY: transform.translateY / -2.5,
+      });
+    }, d + 100);
+    dynamics.setTimeout(function() {
+      dynamics.css(el, {
+        translateX: 0,
+        translateY: 0,
+      });
+    }, d + 150);
+  }
+}
+
 // intro!
+hideContent();
 animateStripes();
 
 dynamics.css(logo, {
   scale: 1,
 })
 dynamics.animate(logo, {
-  scale: 0.95,
+  scale: 0.90,
 }, {
   duration: 1500,
   type: dynamics.easeOut,
@@ -144,11 +185,13 @@ dynamics.setTimeout(function() {
 }, 1000);
 
 dynamics.setTimeout(function() {
+  introEl.style.backgroundColor = 'transparent';
   dynamics.css(logoContainer, {
     scale: 1,
     translateX: Math.random() * windowWidth - windowWidth / 2,
     translateY: Math.random() * windowHeight - windowHeight / 2,
   });
+  showContent();
 }, 1300);
 
 dynamics.setTimeout(function() {
@@ -158,6 +201,5 @@ dynamics.setTimeout(function() {
 }, 1350);
 
 dynamics.setTimeout(function() {
-  introEl.style.backgroundColor = 'transparent';
   logo.style.display = 'none';
 }, 1400);
