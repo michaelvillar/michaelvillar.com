@@ -119,10 +119,10 @@ function createMasksWithStripes(width, height) {
   var maskIdx = 0;
   var x = 0;
   var y = 0;
-  var stripeHeight = 8;
+  var stripeHeight = 10;
 
   while (true) {
-    var w = Math.round(Math.random() * width);
+    var w = Math.max(stripeHeight * 10, Math.round(Math.random() * width));
     masks[maskIdx].push('\n      <rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + stripeHeight + '" style="fill:white;"></rect>\n    ');
 
     maskIdx += 1;
@@ -134,6 +134,7 @@ function createMasksWithStripes(width, height) {
     if (x > width) {
       x = 0;
       y += stripeHeight;
+      stripeHeight = Math.round(Math.random() * 10 + 5);
     }
     if (y >= height) {
       break;
@@ -169,6 +170,7 @@ function cloneAndStripeElement(element, clipPathName) {
 
 var contentEls = [];
 var originalContentEls = document.querySelectorAll('#header-content, #content');
+var coloredElements = [];
 (function () {
   var els = originalContentEls;
   for (var j = 0; j < els.length; j++) {
@@ -176,7 +178,20 @@ var originalContentEls = document.querySelectorAll('#header-content, #content');
     var box = el.getBoundingClientRect();
     var masks = createMasksWithStripes(box.width, box.height);
     for (var i = 0; i < masks.length; i++) {
-      contentEls.push(cloneAndStripeElement(el, masks[i]));
+      var clonedEl = cloneAndStripeElement(el, masks[i]);
+      contentEls.push(clonedEl);
+      if (i % 2 === 0) {
+        var childrenEls = clonedEl.querySelectorAll('*');
+        for (var k = 0; k < childrenEls.length; k++) {
+          var color = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+          var rgb = color.toRgbString();
+          dynamics.css(childrenEls[k], {
+            color: rgb,
+            fill: rgb
+          });
+          coloredElements.push(childrenEls[k]);
+        }
+      }
     }
     el.style.visibility = 'hidden';
   }
@@ -226,12 +241,27 @@ function showContent() {
   for (var i = 0; i < contentEls.length; i++) {
     _loop2(i);
   }
+
+  var _loop3 = function _loop3(_i) {
+    var d = 400 + Math.random() * 1000;
+    dynamics.setTimeout(function () {
+      dynamics.css(coloredElements[_i], {
+        color: '',
+        fill: ''
+      });
+    }, d);
+    maxDelay = Math.max(maxDelay, d);
+  };
+
+  for (var _i = 0; _i < coloredElements.length; _i++) {
+    _loop3(_i);
+  }
   dynamics.setTimeout(function () {
-    for (var _i = 0; _i < contentEls.length; _i++) {
-      document.body.removeChild(contentEls[_i]);
+    for (var _i2 = 0; _i2 < contentEls.length; _i2++) {
+      document.body.removeChild(contentEls[_i2]);
     }
-    for (var _i2 = 0; _i2 < originalContentEls.length; _i2++) {
-      originalContentEls[_i2].style.visibility = 'visible';
+    for (var _i3 = 0; _i3 < originalContentEls.length; _i3++) {
+      originalContentEls[_i3].style.visibility = 'visible';
     }
   }, maxDelay);
 }

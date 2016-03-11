@@ -116,10 +116,10 @@ function createMasksWithStripes(width, height) {
   let maskIdx = 0;
   let x = 0;
   let y = 0;
-  let stripeHeight = 8;
+  let stripeHeight = 10;
 
   while(true) {
-    let w = Math.round(Math.random() * width);
+    let w = Math.max(stripeHeight * 10, Math.round(Math.random() * width));
     masks[maskIdx].push(`
       <rect x="${x}" y="${y}" width="${w}" height="${stripeHeight}" style="fill:white;"></rect>
     `);
@@ -133,6 +133,7 @@ function createMasksWithStripes(width, height) {
     if (x > width) {
       x = 0;
       y += stripeHeight;
+      stripeHeight = Math.round(Math.random() * 10 + 5);
     }
     if (y >= height) {
       break;
@@ -170,6 +171,7 @@ function cloneAndStripeElement(element, clipPathName) {
 
 let contentEls = [];
 let originalContentEls = document.querySelectorAll('#header-content, #content');
+let coloredElements = [];
 (function() {
   let els = originalContentEls;
   for (let j = 0; j < els.length; j++) {
@@ -177,7 +179,20 @@ let originalContentEls = document.querySelectorAll('#header-content, #content');
     let box = el.getBoundingClientRect();
     let masks = createMasksWithStripes(box.width, box.height);
     for (let i = 0; i < masks.length; i++) {
-      contentEls.push(cloneAndStripeElement(el, masks[i]));
+      let clonedEl = cloneAndStripeElement(el, masks[i]);
+      contentEls.push(clonedEl)
+      if (i % 2 === 0) {
+        let childrenEls = clonedEl.querySelectorAll('*');
+        for (let k = 0; k < childrenEls.length; k++) {
+          let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
+          let rgb = color.toRgbString();
+          dynamics.css(childrenEls[k], {
+            color: rgb,
+            fill: rgb,
+          });
+          coloredElements.push(childrenEls[k]);
+        }
+      }
     }
     el.style.visibility = 'hidden';
   }
@@ -221,6 +236,16 @@ function showContent() {
       }, d + 350);
     }
     maxDelay = Math.max(maxDelay, d + 350);
+  }
+  for (let i = 0; i < coloredElements.length; i++) {
+    let d = 400 + Math.random() * 1000;
+    dynamics.setTimeout(function() {
+      dynamics.css(coloredElements[i], {
+        color: '',
+        fill: '',
+      });
+    }, d);
+    maxDelay = Math.max(maxDelay, d);
   }
   dynamics.setTimeout(function() {
     for (let i = 0; i < contentEls.length; i++) {
