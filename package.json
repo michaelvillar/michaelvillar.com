@@ -1,0 +1,14 @@
+{
+  "name": "michaelvillar.com",
+  "version": "2.0.0",
+  "devDependencies": {
+    "babel-core": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-loader": "^6.0.1"
+  },
+  "scripts": {
+    "watch": "babel -w -o ./public/js/mv.es5.js ./public/js/mv.js",
+    "build": "babel -o ./public/js/mv.es5.js ./public/js/mv.js",
+    "start": "ruby app.rb"
+  }
+}
