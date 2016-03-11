@@ -20,12 +20,15 @@ function createLine(options) {
   return el;
 }
 
-let backgroundEl = document.querySelector('#stripes');
+let introEl = document.querySelector('#intro');
+let stripesEl = document.querySelector('#stripes');
+let logoContainer = document.querySelector('#logo-container');
+let logo = logoContainer.querySelector('svg');
 let windowWidth = document.body.clientWidth;
 let windowHeight = document.body.clientHeight;
 
-// animate strips
-function animateStrips(delayEnd=false) {
+// animate stripes
+function animateStripes(delayEnd=false) {
   let stripes = [];
   for (let i = 0; i < 300; i++) {
     (function() {
@@ -45,7 +48,7 @@ function animateStrips(delayEnd=false) {
       };
       let lineEl = createLine(options);
       lineEl.style.display = 'none';
-      backgroundEl.appendChild(lineEl);
+      stripesEl.appendChild(lineEl);
 
       let delay;
       if (i < 200) {
@@ -84,7 +87,7 @@ function animateStrips(delayEnd=false) {
             d += i;
           }
           dynamics.setTimeout(function() {
-            backgroundEl.removeChild(lineEl);
+            stripesEl.removeChild(lineEl);
           }, d);
         }, d);
       }, delay);
@@ -95,10 +98,9 @@ function animateStrips(delayEnd=false) {
   return stripes;
 }
 
-animateStrips();
+// intro!
+animateStripes();
 
-// animate logo
-let logo = document.querySelector('#logo-container svg');
 dynamics.css(logo, {
   scale: 1,
 })
@@ -109,7 +111,6 @@ dynamics.animate(logo, {
   type: dynamics.easeOut,
 });
 
-let logoContainer = document.querySelector('#logo-container');
 function animateLogo() {
   dynamics.css(logoContainer, {
     scale: 0.5,
@@ -134,29 +135,29 @@ function animateLogo() {
 animateLogo();
 
 dynamics.setTimeout(function() {
-  document.querySelector('#intro').style.display = 'block';
+  introEl.style.display = 'block';
 }, 1);
 
 dynamics.setTimeout(function() {
   animateLogo();
-  let stripes = animateStrips(true);
-
-  dynamics.setTimeout(function() {
-    dynamics.css(logoContainer, {
-      scale: 1,
-      translateX: Math.random() * windowWidth - windowWidth / 2,
-      translateY: Math.random() * windowHeight - windowHeight / 2,
-    });
-  }, 300);
-
-  dynamics.setTimeout(function() {
-    dynamics.css(logoContainer, {
-      scale: 0.75,
-    });
-  }, 350);
-
-  dynamics.setTimeout(function() {
-    document.querySelector('#intro').style.backgroundColor = 'transparent';
-    logo.style.display = 'none';
-  }, 400);
+  animateStripes(true);
 }, 1000);
+
+dynamics.setTimeout(function() {
+  dynamics.css(logoContainer, {
+    scale: 1,
+    translateX: Math.random() * windowWidth - windowWidth / 2,
+    translateY: Math.random() * windowHeight - windowHeight / 2,
+  });
+}, 1300);
+
+dynamics.setTimeout(function() {
+  dynamics.css(logoContainer, {
+    scale: 0.75,
+  });
+}, 1350);
+
+dynamics.setTimeout(function() {
+  introEl.style.backgroundColor = 'transparent';
+  logo.style.display = 'none';
+}, 1400);

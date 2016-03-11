@@ -16,12 +16,15 @@ function createLine(options) {
   return el;
 }
 
-var backgroundEl = document.querySelector('#stripes');
+var introEl = document.querySelector('#intro');
+var stripesEl = document.querySelector('#stripes');
+var logoContainer = document.querySelector('#logo-container');
+var logo = logoContainer.querySelector('svg');
 var windowWidth = document.body.clientWidth;
 var windowHeight = document.body.clientHeight;
 
-// animate strips
-function animateStrips() {
+// animate stripes
+function animateStripes() {
   var delayEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
   var stripes = [];
@@ -44,7 +47,7 @@ function animateStrips() {
       };
       var lineEl = createLine(options);
       lineEl.style.display = 'none';
-      backgroundEl.appendChild(lineEl);
+      stripesEl.appendChild(lineEl);
 
       var delay = undefined;
       if (i < 200) {
@@ -83,7 +86,7 @@ function animateStrips() {
             d += i;
           }
           dynamics.setTimeout(function () {
-            backgroundEl.removeChild(lineEl);
+            stripesEl.removeChild(lineEl);
           }, d);
         }, d);
       }, delay);
@@ -98,10 +101,9 @@ function animateStrips() {
   return stripes;
 }
 
-animateStrips();
+// intro!
+animateStripes();
 
-// animate logo
-var logo = document.querySelector('#logo-container svg');
 dynamics.css(logo, {
   scale: 1
 });
@@ -112,7 +114,6 @@ dynamics.animate(logo, {
   type: dynamics.easeOut
 });
 
-var logoContainer = document.querySelector('#logo-container');
 function animateLogo() {
   dynamics.css(logoContainer, {
     scale: 0.5,
@@ -137,29 +138,29 @@ function animateLogo() {
 animateLogo();
 
 dynamics.setTimeout(function () {
-  document.querySelector('#intro').style.display = 'block';
+  introEl.style.display = 'block';
 }, 1);
 
 dynamics.setTimeout(function () {
   animateLogo();
-  var stripes = animateStrips(true);
-
-  dynamics.setTimeout(function () {
-    dynamics.css(logoContainer, {
-      scale: 1,
-      translateX: Math.random() * windowWidth - windowWidth / 2,
-      translateY: Math.random() * windowHeight - windowHeight / 2
-    });
-  }, 300);
-
-  dynamics.setTimeout(function () {
-    dynamics.css(logoContainer, {
-      scale: 0.75
-    });
-  }, 350);
-
-  dynamics.setTimeout(function () {
-    document.querySelector('#intro').style.backgroundColor = 'transparent';
-    logo.style.display = 'none';
-  }, 400);
+  animateStripes(true);
 }, 1000);
+
+dynamics.setTimeout(function () {
+  dynamics.css(logoContainer, {
+    scale: 1,
+    translateX: Math.random() * windowWidth - windowWidth / 2,
+    translateY: Math.random() * windowHeight - windowHeight / 2
+  });
+}, 1300);
+
+dynamics.setTimeout(function () {
+  dynamics.css(logoContainer, {
+    scale: 0.75
+  });
+}, 1350);
+
+dynamics.setTimeout(function () {
+  introEl.style.backgroundColor = 'transparent';
+  logo.style.display = 'none';
+}, 1400);
