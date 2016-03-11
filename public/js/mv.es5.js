@@ -8,11 +8,15 @@ function createEl(template) {
 
 function createSvgEl(template) {
   var el = createEl('\n    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' + template.trim() + '</svg>\n  ');
-  return el.firstChild;
+  return el;
+}
+
+function createSvgChildEl(template) {
+  return createSvgEl(template).firstChild;
 }
 
 function createLine(options) {
-  var el = createSvgEl('\n    <rect x="' + options.x + '" y="' + options.y + '" width="' + options.width + '" height="' + options.height + '" fill="' + options.color + '">\n  ');
+  var el = createSvgChildEl('\n    <rect x="' + options.x + '" y="' + options.y + '" width="' + options.width + '" height="' + options.height + '" fill="' + options.color + '">\n  ');
   return el;
 }
 
@@ -104,32 +108,98 @@ function animateStripes() {
   return stripes;
 }
 
-var contentEls = document.querySelectorAll('#logo, header > h1, header > p, #contact > *, section h2, section ul li, section > a');
-function hideContent() {
-  for (var i = 0; i < contentEls.length; i++) {
-    var el = contentEls[i];
-    el.style.visibility = 'hidden';
+var totalMaskIdx = 0;
+function createMasksWithStripes(width, height) {
+  var masks = [[], [], [], [], [], [], [], [], [], []];
+  var maskNames = [];
+  for (var i = totalMaskIdx; i < totalMaskIdx + masks.length; i++) {
+    maskNames.push('clipPath' + i);
   }
+  totalMaskIdx += masks.length;
+  var maskIdx = 0;
+  var x = 0;
+  var y = 0;
+  var stripeHeight = 8;
+
+  while (true) {
+    var w = Math.round(Math.random() * width);
+    masks[maskIdx].push('\n      <rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + stripeHeight + '" style="fill:white;"></rect>\n    ');
+
+    maskIdx += 1;
+    if (maskIdx >= masks.length) {
+      maskIdx = 0;
+    }
+
+    x += w;
+    if (x > width) {
+      x = 0;
+      y += stripeHeight;
+    }
+    if (y >= height) {
+      break;
+    }
+  }
+
+  var str = masks.map(function (rects, i) {
+    return '<clipPath id="' + maskNames[i] + '">\n      ' + rects.join('') + '\n    </clipPath>';
+  }).join('');
+
+  var maskEl = createSvgEl('<defs>' + str + '</defs>');
+
+  document.body.appendChild(maskEl);
+
+  return maskNames;
 }
 
+function cloneAndStripeElement(element, clipPathName) {
+  var el = element.cloneNode(true);
+  var box = element.getBoundingClientRect();
+
+  dynamics.css(el, {
+    position: 'absolute',
+    left: box.left,
+    top: box.top,
+    display: 'none'
+  });
+  document.body.appendChild(el);
+  el.style['-webkit-clip-path'] = 'url(#' + clipPathName + ')';
+  el.style['clip-path'] = 'url(#' + clipPathName + ')';
+  return el;
+}
+
+var contentEls = [];
+var originalContentEls = document.querySelectorAll('#header-content, #content');
+(function () {
+  var els = originalContentEls;
+  for (var j = 0; j < els.length; j++) {
+    var el = els[j];
+    var box = el.getBoundingClientRect();
+    var masks = createMasksWithStripes(box.width, box.height);
+    for (var i = 0; i < masks.length; i++) {
+      contentEls.push(cloneAndStripeElement(el, masks[i]));
+    }
+    el.style.visibility = 'hidden';
+  }
+})();
+
 function showContent() {
+  var maxDelay = 0;
+
   var _loop2 = function _loop2(i) {
     var el = contentEls[i];
-    var d = 100 + i * 10 + Math.random() * 200;
+    var d = 100 + Math.round(Math.random() * contentEls.length) * 50;
     var transform = {
-      translateX: Math.random() * 10 - 5,
-      translateY: Math.random() * 2 - 1
+      translateX: Math.random() * 40 - 20
     };
     dynamics.css(el, transform);
     dynamics.setTimeout(function () {
       dynamics.css(el, {
-        visibility: 'visible'
+        display: ''
       });
     }, d);
     dynamics.setTimeout(function () {
       dynamics.css(el, {
-        translateX: transform.translateX / -5,
-        translateY: transform.translateY / -2.5
+        translateX: transform.translateX / -5
       });
     }, d + 100);
     dynamics.setTimeout(function () {
@@ -138,15 +208,35 @@ function showContent() {
         translateY: 0
       });
     }, d + 150);
+    if (Math.round(Math.random() * 5) === 0) {
+      dynamics.setTimeout(function () {
+        dynamics.css(el, {
+          translateX: transform.translateX / -2
+        });
+      }, d + 300);
+      dynamics.setTimeout(function () {
+        dynamics.css(el, {
+          translateX: 0
+        });
+      }, d + 350);
+    }
+    maxDelay = Math.max(maxDelay, d + 350);
   };
 
   for (var i = 0; i < contentEls.length; i++) {
     _loop2(i);
   }
+  dynamics.setTimeout(function () {
+    for (var _i = 0; _i < contentEls.length; _i++) {
+      document.body.removeChild(contentEls[_i]);
+    }
+    for (var _i2 = 0; _i2 < originalContentEls.length; _i2++) {
+      originalContentEls[_i2].style.visibility = 'visible';
+    }
+  }, maxDelay);
 }
 
 // intro!
-hideContent();
 animateStripes();
 
 dynamics.css(logo, {

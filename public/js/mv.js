@@ -10,11 +10,15 @@ function createSvgEl(template) {
   let el = createEl(`
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${template.trim()}</svg>
   `);
-  return el.firstChild;
+  return el;
+}
+
+function createSvgChildEl(template) {
+  return createSvgEl(template).firstChild;
 }
 
 function createLine(options) {
-  let el = createSvgEl(`
+  let el = createSvgChildEl(`
     <rect x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" fill="${options.color}">
   `);
   return el;
@@ -101,32 +105,101 @@ function animateStripes(delayEnd=false) {
   return stripes;
 }
 
-let contentEls = document.querySelectorAll('#logo, header > h1, header > p, #contact > *, section h2, section ul li, section > a');
-function hideContent() {
-  for (let i = 0; i < contentEls.length; i++) {
-    let el = contentEls[i];
-    el.style.visibility = 'hidden';
+let totalMaskIdx = 0;
+function createMasksWithStripes(width, height) {
+  let masks = [[],[],[],[],[],[],[],[],[],[]];
+  let maskNames = [];
+  for (let i = totalMaskIdx; i < totalMaskIdx + masks.length; i++) {
+    maskNames.push(`clipPath${i}`);
   }
+  totalMaskIdx += masks.length;
+  let maskIdx = 0;
+  let x = 0;
+  let y = 0;
+  let stripeHeight = 8;
+
+  while(true) {
+    let w = Math.round(Math.random() * width);
+    masks[maskIdx].push(`
+      <rect x="${x}" y="${y}" width="${w}" height="${stripeHeight}" style="fill:white;"></rect>
+    `);
+
+    maskIdx += 1;
+    if (maskIdx >= masks.length) {
+      maskIdx = 0;
+    }
+
+    x += w;
+    if (x > width) {
+      x = 0;
+      y += stripeHeight;
+    }
+    if (y >= height) {
+      break;
+    }
+  }
+
+  let str = masks.map(function(rects, i) {
+    return `<clipPath id="${maskNames[i]}">
+      ${rects.join('')}
+    </clipPath>`;
+  }).join('');
+
+  let maskEl = createSvgEl(`<defs>${str}</defs>`);
+
+  document.body.appendChild(maskEl);
+
+  return maskNames;
 }
 
+function cloneAndStripeElement(element, clipPathName) {
+  let el = element.cloneNode(true);
+  let box = element.getBoundingClientRect();
+
+  dynamics.css(el, {
+    position: 'absolute',
+    left: box.left,
+    top: box.top,
+    display: 'none',
+  });
+  document.body.appendChild(el);
+  el.style['-webkit-clip-path'] = `url(#${clipPathName})`;
+  el.style['clip-path'] = `url(#${clipPathName})`;
+  return el;
+}
+
+let contentEls = [];
+let originalContentEls = document.querySelectorAll('#header-content, #content');
+(function() {
+  let els = originalContentEls;
+  for (let j = 0; j < els.length; j++) {
+    let el = els[j];
+    let box = el.getBoundingClientRect();
+    let masks = createMasksWithStripes(box.width, box.height);
+    for (let i = 0; i < masks.length; i++) {
+      contentEls.push(cloneAndStripeElement(el, masks[i]));
+    }
+    el.style.visibility = 'hidden';
+  }
+})();
+
 function showContent() {
+  let maxDelay = 0;
   for (let i = 0; i < contentEls.length; i++) {
     let el = contentEls[i];
-    let d = 100 + i * 10 + Math.random() * 200;
+    let d = 100 + Math.round(Math.random() * contentEls.length) * 50;
     let transform = {
-      translateX: Math.random() * 10 - 5,
-      translateY: Math.random() * 2 - 1,
+      translateX: Math.random() * 40 - 20,
     };
     dynamics.css(el, transform);
     dynamics.setTimeout(function() {
       dynamics.css(el, {
-        visibility: 'visible',
+        display: '',
       });
     }, d);
     dynamics.setTimeout(function() {
       dynamics.css(el, {
         translateX: transform.translateX / -5,
-        translateY: transform.translateY / -2.5,
       });
     }, d + 100);
     dynamics.setTimeout(function() {
@@ -135,11 +208,31 @@ function showContent() {
         translateY: 0,
       });
     }, d + 150);
+    if (Math.round(Math.random() * 5) === 0) {
+      dynamics.setTimeout(function() {
+        dynamics.css(el, {
+          translateX: transform.translateX / -2,
+        });
+      }, d + 300);
+      dynamics.setTimeout(function() {
+        dynamics.css(el, {
+          translateX: 0,
+        });
+      }, d + 350);
+    }
+    maxDelay = Math.max(maxDelay, d + 350);
   }
+  dynamics.setTimeout(function() {
+    for (let i = 0; i < contentEls.length; i++) {
+      document.body.removeChild(contentEls[i]);
+    }
+    for (let i = 0; i < originalContentEls.length; i++) {
+      originalContentEls[i].style.visibility = 'visible';
+    }
+  }, maxDelay);
 }
 
 // intro!
-hideContent();
 animateStripes();
 
 dynamics.css(logo, {

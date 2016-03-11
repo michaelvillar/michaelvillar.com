@@ -53,11 +53,15 @@ header {
   flex-direction: column;
 }
 
-header #logo {
+#header-content {
+  text-align: center;
+}
+
+#header-content #logo {
   margin-bottom: 10px;
 }
 
-header p {
+#header-content p {
   padding-top: 2px;
 }
 
@@ -141,11 +145,11 @@ section a.more .arrow {
     margin: 40px 24px 16px;
     width: auto;
   }
-  header #logo {
+  #header-content #logo {
     top: -33px;
   }
 
-  header h1, header p {
+  #header-content h1, #header-content p {
     left: 24px;
     margin-left: 0;
   }
