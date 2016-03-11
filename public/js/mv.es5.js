@@ -202,7 +202,7 @@ function showContent() {
 
   var _loop2 = function _loop2(i) {
     var el = contentEls[i];
-    var d = 100 + Math.round(Math.random() * contentEls.length) * 50;
+    var d = 50 + Math.round(Math.random() * contentEls.length) * 75;
     var transform = {
       translateX: Math.random() * 40 - 20
     };
@@ -228,12 +228,12 @@ function showContent() {
         dynamics.css(el, {
           translateX: transform.translateX / -2
         });
-      }, d + 300);
+      }, d + 200);
       dynamics.setTimeout(function () {
         dynamics.css(el, {
           translateX: 0
         });
-      }, d + 350);
+      }, d + 250);
     }
     maxDelay = Math.max(maxDelay, d + 350);
   };
@@ -263,7 +263,7 @@ function showContent() {
     for (var _i3 = 0; _i3 < originalContentEls.length; _i3++) {
       originalContentEls[_i3].style.visibility = 'visible';
     }
-  }, maxDelay);
+  }, maxDelay + 10);
 }
 
 // intro!

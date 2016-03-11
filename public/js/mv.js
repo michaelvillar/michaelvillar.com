@@ -202,7 +202,7 @@ function showContent() {
   let maxDelay = 0;
   for (let i = 0; i < contentEls.length; i++) {
     let el = contentEls[i];
-    let d = 100 + Math.round(Math.random() * contentEls.length) * 50;
+    let d = 50 + Math.round(Math.random() * contentEls.length) * 75;
     let transform = {
       translateX: Math.random() * 40 - 20,
     };
@@ -228,12 +228,12 @@ function showContent() {
         dynamics.css(el, {
           translateX: transform.translateX / -2,
         });
-      }, d + 300);
+      }, d + 200);
       dynamics.setTimeout(function() {
         dynamics.css(el, {
           translateX: 0,
         });
-      }, d + 350);
+      }, d + 250);
     }
     maxDelay = Math.max(maxDelay, d + 350);
   }
@@ -254,7 +254,7 @@ function showContent() {
     for (let i = 0; i < originalContentEls.length; i++) {
       originalContentEls[i].style.visibility = 'visible';
     }
-  }, maxDelay);
+  }, maxDelay + 10);
 }
 
 // intro!
