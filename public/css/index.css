@@ -98,6 +98,9 @@ header {
 #contact a svg path {
   fill: #7A7C80;
 }
+#contact a:hover svg path {
+  fill: #adb0b6;
+}
 
 #content {
   position: absolute;
@@ -124,6 +127,10 @@ section ul a {
   color: #7A7C80;
   text-decoration: none;
 }
+section ul a:hover {
+  color: #adb0b6;
+}
+
 a.more {
   font-size: 16px;
   text-decoration: none;
@@ -140,6 +147,12 @@ a.more {
 }
 a.more .arrow {
   fill: #B0B1B3;
+}
+a.more:hover {
+  color: #adb0b6;
+}
+a.more:hover .arrow {
+  fill: #adb0b6;
 }
 
 #page-stripes {

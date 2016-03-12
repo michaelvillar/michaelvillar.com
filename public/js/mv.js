@@ -375,7 +375,8 @@ function showContent() {
   function animateCrazyLogo() {
     let el = document.querySelector('#header-logo');
     let box = el.getBoundingClientRect();
-    let masks = createMasksWithStripes(10, box);
+    let count = 10 + Math.random() * 10;
+    let masks = createMasksWithStripes(count, box, Math.round(100 / count));
     let clonedEls = [];
 
     for (let i = 0; i < masks.length; i++) {
@@ -499,7 +500,7 @@ function showContent() {
           let maskEl = document.querySelector(`#${masks[i]}`);
           maskEl.parentNode.removeChild(maskEl);
         }
-      }, 150);
+      }, Math.random() * 1000);
     };
 
     animate();

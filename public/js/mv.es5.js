@@ -384,7 +384,8 @@ function showContent() {
   function animateCrazyLogo() {
     var el = document.querySelector('#header-logo');
     var box = el.getBoundingClientRect();
-    var masks = createMasksWithStripes(10, box);
+    var count = 10 + Math.random() * 10;
+    var masks = createMasksWithStripes(count, box, Math.round(100 / count));
     var clonedEls = [];
 
     for (var i = 0; i < masks.length; i++) {
@@ -516,7 +517,7 @@ function showContent() {
           var maskEl = document.querySelector('#' + masks[_i5]);
           maskEl.parentNode.removeChild(maskEl);
         }
-      }, 150);
+      }, Math.random() * 1000);
     };
 
     animate();
