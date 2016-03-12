@@ -43,7 +43,7 @@ h1, h2 {
   height: 560px;
 }
 
-@media only screen and (max-height: 560px),
+@media only screen and (max-height: 580px),
        only screen and (max-width: 578px) {
   #page {
     top: 14px;
