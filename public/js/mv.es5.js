@@ -250,7 +250,6 @@ function showContent() {
         translateY: 0
       });
       if (!more) {
-        console.log('remove');
         document.body.removeChild(el);
       }
     }, d + 150);
@@ -319,7 +318,7 @@ function showContent() {
   animateLogo();
 
   dynamics.setTimeout(function () {
-    introEl.style.display = 'block';
+    logoContainer.style.visibility = 'visible';
   }, 1);
 
   dynamics.setTimeout(function () {
