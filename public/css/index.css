@@ -24,6 +24,14 @@ h1, h2 {
   color: white;
 }
 
+.full-size {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
 #page {
   position: absolute;
   top: 50%;
@@ -85,10 +93,6 @@ header {
   fill: #7A7C80;
 }
 
-#contact a:hover svg path {
-  fill: white;
-}
-
 #content {
   position: absolute;
   left: 50%;
@@ -114,27 +118,26 @@ section ul a {
   color: #7A7C80;
   text-decoration: none;
 }
-
-section ul a:hover {
-  color: white;
-}
-
-section a.more {
+a.more {
   font-size: 16px;
   text-decoration: none;
 }
 
-section a.more svg {
+a.more svg {
   width: 6px;
   height: 10px;
   margin-left: 7px;
 }
 
-section a.more {
+a.more {
   color: #B0B1B3;
 }
-section a.more .arrow {
+a.more .arrow {
   fill: #B0B1B3;
+}
+
+#page-stripes {
+  pointer-events: none;
 }
 
 @media only screen and (max-width: 578px) {
@@ -174,29 +177,11 @@ section a.more .arrow {
 }
 
 #intro {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
   background: #101214;
   pointer-events: none;
 }
 
-#stripes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
 #logo-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
   transform-origin: 50% 50%;
   transform: scale(0.5);
   display: flex;

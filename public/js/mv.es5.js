@@ -44,11 +44,24 @@ function _animateStripes(container) {
     }
     var baseWidth = Math.max(windowWidth, 1000);
     var width = Math.round(baseWidth / 10 + Math.random() * baseWidth / 10) * options.sizeRatio;
+    var height = Math.round(Math.random() * 10 + 10) * options.sizeRatio;
+    var point = undefined;
+    if (options.point) {
+      point = {
+        x: Math.round(options.point.x - width / 2 + Math.random() * 200 - 100),
+        y: Math.round(options.point.y - height / 2 + Math.random() * 50 - 25)
+      };
+    } else {
+      point = {
+        x: Math.round((windowWidth + width) * Math.random() - width),
+        y: Math.round(windowHeight * Math.random())
+      };
+    }
     var lineOptions = {
-      x: Math.round((windowWidth + width) * Math.random() - width),
-      y: Math.round(windowHeight * Math.random()),
+      x: point.x,
+      y: point.y,
       width: width,
-      height: Math.round(Math.random() * 10 + 10) * options.sizeRatio,
+      height: height,
       color: color
     };
     var lineEl = createLine(lineOptions);
@@ -132,21 +145,25 @@ function animateColoredStripes(container) {
 }
 
 var totalMaskIdx = 0;
-function createMasksWithStripes(width, height) {
-  var masks = [[], [], [], [], [], []];
+function createMasksWithStripes(count, box) {
+  var averageHeight = arguments.length <= 2 || arguments[2] === undefined ? 10 : arguments[2];
+
+  var masks = [];
+  for (var i = 0; i < count; i++) {
+    masks.push([]);
+  }
   var maskNames = [];
-  for (var i = totalMaskIdx; i < totalMaskIdx + masks.length; i++) {
-    maskNames.push('clipPath' + i);
+  for (var _i = totalMaskIdx; _i < totalMaskIdx + masks.length; _i++) {
+    maskNames.push('clipPath' + _i);
   }
   totalMaskIdx += masks.length;
   var maskIdx = 0;
   var x = 0;
   var y = 0;
-  var stripeHeight = 10;
-
+  var stripeHeight = averageHeight;
   while (true) {
-    var w = Math.max(stripeHeight * 10, Math.round(Math.random() * width));
-    masks[maskIdx].push('\n      <rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + stripeHeight + '" style="fill:white;"></rect>\n    ');
+    var w = Math.max(stripeHeight * 10, Math.round(Math.random() * box.width));
+    masks[maskIdx].push('\n      M ' + x + ',' + y + ' L ' + (x + w) + ',' + y + ' L ' + (x + w) + ',' + (y + stripeHeight) + ' L ' + x + ',' + (y + stripeHeight) + ' Z\n    ');
 
     maskIdx += 1;
     if (maskIdx >= masks.length) {
@@ -154,26 +171,20 @@ function createMasksWithStripes(width, height) {
     }
 
     x += w;
-    if (x > width) {
+    if (x > box.width) {
       x = 0;
       y += stripeHeight;
-      stripeHeight = Math.round(Math.random() * 10 + 5);
+      stripeHeight = Math.round(Math.random() * averageHeight + averageHeight / 2);
     }
-    if (y >= height) {
+    if (y >= box.height) {
       break;
     }
   }
 
-  var str = masks.map(function (rects, i) {
-    return '<clipPath id="' + maskNames[i] + '">\n      ' + rects.join('') + '\n    </clipPath>';
-  }).join('');
-
-  var maskEl = createSvgEl('<defs>' + str + '</defs>');
-  dynamics.css(maskEl, {
-    width: 0,
-    height: 0
+  masks.forEach(function (rects, i) {
+    var el = createSvgChildEl('<clipPath id="' + maskNames[i] + '">\n      <path d="' + rects.join(' ') + '" fill="white"></path>\n    </clipPath>');
+    document.querySelector('#clip-paths g').appendChild(el);
   });
-  document.body.appendChild(maskEl);
 
   return maskNames;
 }
@@ -181,18 +192,26 @@ function createMasksWithStripes(width, height) {
 function cloneAndStripeElement(element, clipPathName) {
   var el = element.cloneNode(true);
   var box = element.getBoundingClientRect();
+  var style = window.getComputedStyle(element);
 
   dynamics.css(el, {
     position: 'absolute',
-    left: box.left,
-    top: box.top,
+    left: Math.round(box.left),
+    top: Math.round(box.top),
+    width: Math.ceil(box.width),
+    height: Math.ceil(box.height),
     display: 'none',
     pointerEvents: 'none',
-    background: '#101214'
+    background: '#101214',
+    fontSize: style.fontSize,
+    fontFamily: style.fontFamily,
+    color: style.color,
+    textDecoration: style.textDecoration
   });
   document.body.appendChild(el);
-  el.style['-webkit-clip-path'] = 'url(#' + clipPathName + ')';
-  el.style['clip-path'] = 'url(#' + clipPathName + ')';
+  el.style['-webkit-clip-path'] = 'url(/#' + clipPathName + ')';
+  el.style['clip-path'] = 'url(/#' + clipPathName + ')';
+
   return el;
 }
 
@@ -203,7 +222,7 @@ var originalContentEls = document.querySelectorAll('#header-content, #content');
   for (var j = 0; j < els.length; j++) {
     var el = els[j];
     var box = el.getBoundingClientRect();
-    var masks = createMasksWithStripes(box.width, box.height);
+    var masks = createMasksWithStripes(6, box);
     for (var i = 0; i < masks.length; i++) {
       var clonedEl = cloneAndStripeElement(el, masks[i]);
       clonedEl.setAttribute('data-idx', i);
@@ -269,8 +288,8 @@ function showContent() {
     _loop2(i);
   }
   dynamics.setTimeout(function () {
-    for (var _i = 0; _i < originalContentEls.length; _i++) {
-      originalContentEls[_i].style.visibility = 'visible';
+    for (var _i2 = 0; _i2 < originalContentEls.length; _i2++) {
+      originalContentEls[_i2].style.visibility = 'visible';
     }
   }, maxDelay);
 }
@@ -355,4 +374,119 @@ function showContent() {
   dynamics.setTimeout(function () {
     document.body.removeChild(introEl);
   }, 3000);
+})();
+
+// page
+(function () {
+  var pageStripesEl = document.querySelector('#page-stripes');
+  var linkEls = document.querySelectorAll('a');
+
+  // function randomStripes(options) {
+  //   animateColoredStripes(pageStripesEl, options);
+  // };
+
+  // function randomStripesRunLoop() {
+  //   dynamics.setTimeout(function() {
+  //     randomStripes({
+  //       count: 20 + Math.random() * 50,
+  //     });
+  //     randomStripesRunLoop();
+  //   }, 2000 + Math.random() * 5000);
+  // };
+
+  // dynamics.setTimeout(randomStripesRunLoop, 2000);
+
+  function handleMouseOver(e) {
+    var el = e.target;
+    while (el && el.tagName.toLowerCase() !== 'a') {
+      el = el.parentNode;
+    }
+    if (!el) {
+      return;
+    }
+    var r = animateLink(el);
+
+    var handleMouseOut = function handleMouseOut(e) {
+      el.removeEventListener('mouseout', handleMouseOut);
+      r.stop();
+    };
+
+    el.addEventListener('mouseout', handleMouseOut);
+  }
+
+  function animateLink(el) {
+    var animating = true;
+    var box = el.getBoundingClientRect();
+
+    var animate = function animate() {
+      var masks = createMasksWithStripes(3, box, 3);
+      var clonedEls = [];
+
+      for (var i = 0; i < masks.length; i++) {
+        var clonedEl = cloneAndStripeElement(el, masks[i]);
+        var childrenEls = Array.prototype.slice.apply(clonedEl.querySelectorAll('path'));
+        clonedEl.style.cursor = "pointer";
+        childrenEls.push(clonedEl);
+        for (var k = 0; k < childrenEls.length; k++) {
+          var _color2 = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+          var rgb = _color2.toRgbString();
+          dynamics.css(childrenEls[k], {
+            color: rgb,
+            fill: rgb
+          });
+        }
+        clonedEl.style.display = '';
+        clonedEls.push(clonedEl);
+      }
+
+      var _loop3 = function _loop3(_i3) {
+        var clonedEl = clonedEls[_i3];
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 10 - 5
+        });
+
+        dynamics.setTimeout(function () {
+          dynamics.css(clonedEl, {
+            translateX: 0
+          });
+        }, 50);
+
+        dynamics.setTimeout(function () {
+          dynamics.css(clonedEl, {
+            translateX: Math.random() * 5 - 2.5
+          });
+        }, 100);
+
+        dynamics.setTimeout(function () {
+          document.body.removeChild(clonedEl);
+        }, 150);
+      };
+
+      for (var _i3 = 0; _i3 < clonedEls.length; _i3++) {
+        _loop3(_i3);
+      }
+
+      dynamics.setTimeout(function () {
+        if (animating) {
+          animate();
+        }
+        for (var _i4 = 0; _i4 < masks.length; _i4++) {
+          var maskEl = document.querySelector('#' + masks[_i4]);
+          maskEl.parentNode.removeChild(maskEl);
+        }
+      }, 150);
+    };
+
+    animate();
+
+    return {
+      stop: function stop() {
+        animating = false;
+      }
+    };
+  };
+
+  for (var i = 0; i < linkEls.length; i++) {
+    linkEls[i].addEventListener('mouseover', handleMouseOver);
+  }
 })();

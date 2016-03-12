@@ -45,11 +45,24 @@ function _animateStripes(container, options={}) {
     }
     let baseWidth = Math.max(windowWidth, 1000);
     let width = Math.round(baseWidth / 10 + Math.random() * baseWidth / 10) * options.sizeRatio;
+    let height = Math.round(Math.random() * 10 + 10) * options.sizeRatio;
+    let point;
+    if (options.point) {
+      point = {
+        x: Math.round(options.point.x - width / 2 + Math.random() * 200 - 100),
+        y: Math.round(options.point.y - height / 2 + Math.random() * 50 - 25),
+      };
+    } else {
+      point = {
+        x: Math.round((windowWidth + width) * Math.random() - width),
+        y: Math.round(windowHeight * Math.random()),
+      };
+    }
     let lineOptions = {
-      x: Math.round((windowWidth + width) * Math.random() - width),
-      y: Math.round(windowHeight * Math.random()),
+      x: point.x,
+      y: point.y,
       width: width,
-      height: Math.round(Math.random() * 10 + 10) * options.sizeRatio,
+      height: height,
       color: color,
     };
     let lineEl = createLine(lineOptions);
@@ -125,8 +138,11 @@ function animateColoredStripes(container, options={}) {
 }
 
 let totalMaskIdx = 0;
-function createMasksWithStripes(width, height) {
-  let masks = [[],[],[],[],[],[]];
+function createMasksWithStripes(count, box, averageHeight=10) {
+  let masks = [];
+  for (let i = 0; i < count; i++) {
+    masks.push([]);
+  }
   let maskNames = [];
   for (let i = totalMaskIdx; i < totalMaskIdx + masks.length; i++) {
     maskNames.push(`clipPath${i}`);
@@ -135,12 +151,11 @@ function createMasksWithStripes(width, height) {
   let maskIdx = 0;
   let x = 0;
   let y = 0;
-  let stripeHeight = 10;
-
+  let stripeHeight = averageHeight;
   while(true) {
-    let w = Math.max(stripeHeight * 10, Math.round(Math.random() * width));
+    let w = Math.max(stripeHeight * 10, Math.round(Math.random() * box.width));
     masks[maskIdx].push(`
-      <rect x="${x}" y="${y}" width="${w}" height="${stripeHeight}" style="fill:white;"></rect>
+      M ${x},${y} L ${x + w},${y} L ${x + w},${y + stripeHeight} L ${x},${y + stripeHeight} Z
     `);
 
     maskIdx += 1;
@@ -149,28 +164,22 @@ function createMasksWithStripes(width, height) {
     }
 
     x += w;
-    if (x > width) {
+    if (x > box.width) {
       x = 0;
       y += stripeHeight;
-      stripeHeight = Math.round(Math.random() * 10 + 5);
+      stripeHeight = Math.round(Math.random() * averageHeight + averageHeight / 2);
     }
-    if (y >= height) {
+    if (y >= box.height) {
       break;
     }
   }
 
-  let str = masks.map(function(rects, i) {
-    return `<clipPath id="${maskNames[i]}">
-      ${rects.join('')}
-    </clipPath>`;
-  }).join('');
-
-  let maskEl = createSvgEl(`<defs>${str}</defs>`);
-  dynamics.css(maskEl, {
-    width: 0,
-    height: 0,
+  masks.forEach(function(rects, i) {
+    let el = createSvgChildEl(`<clipPath id="${maskNames[i]}">
+      <path d="${rects.join(' ')}" fill="white"></path>
+    </clipPath>`);
+    document.querySelector('#clip-paths g').appendChild(el);
   });
-  document.body.appendChild(maskEl);
 
   return maskNames;
 }
@@ -178,18 +187,26 @@ function createMasksWithStripes(width, height) {
 function cloneAndStripeElement(element, clipPathName) {
   let el = element.cloneNode(true);
   let box = element.getBoundingClientRect();
+  let style = window.getComputedStyle(element);
 
   dynamics.css(el, {
     position: 'absolute',
-    left: box.left,
-    top: box.top,
+    left: Math.round(box.left),
+    top: Math.round(box.top),
+    width: Math.ceil(box.width),
+    height: Math.ceil(box.height),
     display: 'none',
     pointerEvents: 'none',
     background: '#101214',
+    fontSize: style.fontSize,
+    fontFamily: style.fontFamily,
+    color: style.color,
+    textDecoration: style.textDecoration,
   });
   document.body.appendChild(el);
-  el.style['-webkit-clip-path'] = `url(#${clipPathName})`;
-  el.style['clip-path'] = `url(#${clipPathName})`;
+  el.style['-webkit-clip-path'] = `url(/#${clipPathName})`;
+  el.style['clip-path'] = `url(/#${clipPathName})`;
+
   return el;
 }
 
@@ -200,7 +217,7 @@ let originalContentEls = document.querySelectorAll('#header-content, #content');
   for (let j = 0; j < els.length; j++) {
     let el = els[j];
     let box = el.getBoundingClientRect();
-    let masks = createMasksWithStripes(box.width, box.height);
+    let masks = createMasksWithStripes(6, box);
     for (let i = 0; i < masks.length; i++) {
       let clonedEl = cloneAndStripeElement(el, masks[i]);
       clonedEl.setAttribute('data-idx', i);
@@ -347,4 +364,116 @@ function showContent() {
   dynamics.setTimeout(function() {
     document.body.removeChild(introEl);
   }, 3000);
+})();
+
+
+// page
+(function() {
+  let pageStripesEl = document.querySelector('#page-stripes');
+  let linkEls = document.querySelectorAll('a');
+
+  // function randomStripes(options) {
+  //   animateColoredStripes(pageStripesEl, options);
+  // };
+
+  // function randomStripesRunLoop() {
+  //   dynamics.setTimeout(function() {
+  //     randomStripes({
+  //       count: 20 + Math.random() * 50,
+  //     });
+  //     randomStripesRunLoop();
+  //   }, 2000 + Math.random() * 5000);
+  // };
+
+  // dynamics.setTimeout(randomStripesRunLoop, 2000);
+
+  function handleMouseOver(e) {
+    let el = e.target;
+    while (el && el.tagName.toLowerCase() !== 'a') {
+      el = el.parentNode;
+    }
+    if (!el) {
+      return;
+    }
+    let r = animateLink(el);
+
+    let handleMouseOut = function(e) {
+      el.removeEventListener('mouseout', handleMouseOut);
+      r.stop();
+    }
+
+    el.addEventListener('mouseout', handleMouseOut);
+  }
+
+  function animateLink(el) {
+    let animating = true;
+    let box = el.getBoundingClientRect();
+
+    let animate = function() {
+      let masks = createMasksWithStripes(3, box, 3);
+      let clonedEls = [];
+
+      for (let i = 0; i < masks.length; i++) {
+        let clonedEl = cloneAndStripeElement(el, masks[i]);
+        let childrenEls = Array.prototype.slice.apply(clonedEl.querySelectorAll('path'));
+        clonedEl.style.cursor = "pointer";
+        childrenEls.push(clonedEl);
+        for (let k = 0; k < childrenEls.length; k++) {
+          let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
+          let rgb = color.toRgbString();
+          dynamics.css(childrenEls[k], {
+            color: rgb,
+            fill: rgb,
+          });
+        }
+        clonedEl.style.display = '';
+        clonedEls.push(clonedEl);
+      }
+
+      for (let i = 0; i < clonedEls.length; i++) {
+        let clonedEl = clonedEls[i];
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 10 - 5,
+        });
+
+        dynamics.setTimeout(function() {
+          dynamics.css(clonedEl, {
+            translateX: 0,
+          });
+        }, 50);
+
+        dynamics.setTimeout(function() {
+          dynamics.css(clonedEl, {
+            translateX: Math.random() * 5 - 2.5,
+          });
+        }, 100);
+
+        dynamics.setTimeout(function() {
+          document.body.removeChild(clonedEl);
+        }, 150);
+      }
+
+      dynamics.setTimeout(function() {
+        if(animating) {
+          animate();
+        }
+        for (let i = 0; i < masks.length; i++) {
+          let maskEl = document.querySelector(`#${masks[i]}`);
+          maskEl.parentNode.removeChild(maskEl);
+        }
+      }, 150);
+    };
+
+    animate();
+
+    return {
+      stop: function() {
+        animating = false;
+      },
+    };
+  };
+
+  for (let i = 0; i < linkEls.length; i++) {
+    linkEls[i].addEventListener('mouseover', handleMouseOver);
+  }
 })();
