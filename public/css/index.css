@@ -205,8 +205,8 @@ section a.more .arrow {
 }
 
 #logo-container > svg {
-  width: 50vw;
-  height: 50vh;
+  width: 70vw;
+  height: 70vh;
   max-width: 640px;
   max-height: 536px;
 }
