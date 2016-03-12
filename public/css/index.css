@@ -193,10 +193,20 @@ section a.more .arrow {
 
 #logo-container {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -320px;
-  margin-top: -268px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   transform-origin: 50% 50%;
   transform: scale(0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#logo-container > svg {
+  width: 50vw;
+  height: 50vh;
+  max-width: 640px;
+  max-height: 536px;
 }

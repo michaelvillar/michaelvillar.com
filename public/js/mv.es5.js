@@ -41,7 +41,8 @@ function animateStripes() {
       } else {
         color = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
       }
-      var width = Math.round(windowWidth / 10 + Math.random() * windowWidth / 10) * (i < 200 ? 3 : 1);
+      var baseWidth = Math.max(windowWidth, 1000);
+      var width = Math.round(baseWidth / 10 + Math.random() * baseWidth / 10) * (i < 200 ? 3 : 1);
       var options = {
         x: Math.round((windowWidth + width) * Math.random() - width),
         y: Math.round(windowHeight * Math.random()),
