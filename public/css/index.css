@@ -65,6 +65,10 @@ header {
   text-align: center;
 }
 
+#header-logo {
+  text-align: center;
+}
+
 #header-content #logo {
   margin-bottom: 10px;
 }

@@ -372,20 +372,59 @@ function showContent() {
   let pageStripesEl = document.querySelector('#page-stripes');
   let linkEls = document.querySelectorAll('a');
 
-  // function randomStripes(options) {
-  //   animateColoredStripes(pageStripesEl, options);
-  // };
+  function animateCrazyLogo() {
+    let el = document.querySelector('#header-logo');
+    let box = el.getBoundingClientRect();
+    let masks = createMasksWithStripes(10, box);
+    let clonedEls = [];
 
-  // function randomStripesRunLoop() {
-  //   dynamics.setTimeout(function() {
-  //     randomStripes({
-  //       count: 20 + Math.random() * 50,
-  //     });
-  //     randomStripesRunLoop();
-  //   }, 2000 + Math.random() * 5000);
-  // };
+    for (let i = 0; i < masks.length; i++) {
+      let clonedEl = cloneAndStripeElement(el, masks[i]);
+      let path = clonedEl.querySelector('path');
+      let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
+      dynamics.css(path, {
+        fill: color.toRgbString(),
+      });
+      clonedEls.push(clonedEl);
+    }
 
-  // dynamics.setTimeout(randomStripesRunLoop, 2000);
+    for (let i = 0; i < clonedEls.length; i++) {
+      let clonedEl = clonedEls[i];
+      let d = Math.random() * 100;
+
+      dynamics.setTimeout(function() {
+        clonedEl.style.display = '';
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 100 - 50,
+        });
+      }, d);
+
+      dynamics.setTimeout(function() {
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 20 - 10,
+        });
+      }, d + 50);
+
+      dynamics.setTimeout(function() {
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 5 - 2.5,
+        });
+      }, d + 100);
+
+      dynamics.setTimeout(function() {
+        document.body.removeChild(clonedEl);
+      }, d + 150);
+    }
+  };
+
+  function logoAnimationLoop() {
+    dynamics.setTimeout(function() {
+      animateCrazyLogo();
+      logoAnimationLoop();
+    }, 100 + Math.random() * 5000);
+  };
+
+  dynamics.setTimeout(logoAnimationLoop, 4000);
 
   function handleMouseOver(e) {
     let el = e.target;

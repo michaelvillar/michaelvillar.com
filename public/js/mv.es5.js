@@ -381,20 +381,63 @@ function showContent() {
   var pageStripesEl = document.querySelector('#page-stripes');
   var linkEls = document.querySelectorAll('a');
 
-  // function randomStripes(options) {
-  //   animateColoredStripes(pageStripesEl, options);
-  // };
+  function animateCrazyLogo() {
+    var el = document.querySelector('#header-logo');
+    var box = el.getBoundingClientRect();
+    var masks = createMasksWithStripes(10, box);
+    var clonedEls = [];
 
-  // function randomStripesRunLoop() {
-  //   dynamics.setTimeout(function() {
-  //     randomStripes({
-  //       count: 20 + Math.random() * 50,
-  //     });
-  //     randomStripesRunLoop();
-  //   }, 2000 + Math.random() * 5000);
-  // };
+    for (var i = 0; i < masks.length; i++) {
+      var clonedEl = cloneAndStripeElement(el, masks[i]);
+      var path = clonedEl.querySelector('path');
+      var _color2 = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+      dynamics.css(path, {
+        fill: _color2.toRgbString()
+      });
+      clonedEls.push(clonedEl);
+    }
 
-  // dynamics.setTimeout(randomStripesRunLoop, 2000);
+    var _loop3 = function _loop3(_i3) {
+      var clonedEl = clonedEls[_i3];
+      var d = Math.random() * 100;
+
+      dynamics.setTimeout(function () {
+        clonedEl.style.display = '';
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 100 - 50
+        });
+      }, d);
+
+      dynamics.setTimeout(function () {
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 20 - 10
+        });
+      }, d + 50);
+
+      dynamics.setTimeout(function () {
+        dynamics.css(clonedEl, {
+          translateX: Math.random() * 5 - 2.5
+        });
+      }, d + 100);
+
+      dynamics.setTimeout(function () {
+        document.body.removeChild(clonedEl);
+      }, d + 150);
+    };
+
+    for (var _i3 = 0; _i3 < clonedEls.length; _i3++) {
+      _loop3(_i3);
+    }
+  };
+
+  function logoAnimationLoop() {
+    dynamics.setTimeout(function () {
+      animateCrazyLogo();
+      logoAnimationLoop();
+    }, 100 + Math.random() * 5000);
+  };
+
+  dynamics.setTimeout(logoAnimationLoop, 4000);
 
   function handleMouseOver(e) {
     var el = e.target;
@@ -428,8 +471,8 @@ function showContent() {
         clonedEl.style.cursor = "pointer";
         childrenEls.push(clonedEl);
         for (var k = 0; k < childrenEls.length; k++) {
-          var _color2 = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
-          var rgb = _color2.toRgbString();
+          var _color3 = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+          var rgb = _color3.toRgbString();
           dynamics.css(childrenEls[k], {
             color: rgb,
             fill: rgb
@@ -439,8 +482,8 @@ function showContent() {
         clonedEls.push(clonedEl);
       }
 
-      var _loop3 = function _loop3(_i3) {
-        var clonedEl = clonedEls[_i3];
+      var _loop4 = function _loop4(_i4) {
+        var clonedEl = clonedEls[_i4];
         dynamics.css(clonedEl, {
           translateX: Math.random() * 10 - 5
         });
@@ -462,16 +505,16 @@ function showContent() {
         }, 150);
       };
 
-      for (var _i3 = 0; _i3 < clonedEls.length; _i3++) {
-        _loop3(_i3);
+      for (var _i4 = 0; _i4 < clonedEls.length; _i4++) {
+        _loop4(_i4);
       }
 
       dynamics.setTimeout(function () {
         if (animating) {
           animate();
         }
-        for (var _i4 = 0; _i4 < masks.length; _i4++) {
-          var maskEl = document.querySelector('#' + masks[_i4]);
+        for (var _i5 = 0; _i5 < masks.length; _i5++) {
+          var maskEl = document.querySelector('#' + masks[_i5]);
           maskEl.parentNode.removeChild(maskEl);
         }
       }, 150);
