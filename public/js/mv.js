@@ -107,7 +107,7 @@ function animateStripes(delayEnd=false) {
 
 let totalMaskIdx = 0;
 function createMasksWithStripes(width, height) {
-  let masks = [[],[],[],[],[],[],[],[],[],[]];
+  let masks = [[],[],[],[],[],[]];
   let maskNames = [];
   for (let i = totalMaskIdx; i < totalMaskIdx + masks.length; i++) {
     maskNames.push(`clipPath${i}`);
@@ -162,6 +162,8 @@ function cloneAndStripeElement(element, clipPathName) {
     left: box.left,
     top: box.top,
     display: 'none',
+    pointerEvents: 'none',
+    background: '#101214',
   });
   document.body.appendChild(el);
   el.style['-webkit-clip-path'] = `url(#${clipPathName})`;
@@ -171,7 +173,6 @@ function cloneAndStripeElement(element, clipPathName) {
 
 let contentEls = [];
 let originalContentEls = document.querySelectorAll('#header-content, #content');
-let coloredElements = [];
 (function() {
   let els = originalContentEls;
   for (let j = 0; j < els.length; j++) {
@@ -180,18 +181,16 @@ let coloredElements = [];
     let masks = createMasksWithStripes(box.width, box.height);
     for (let i = 0; i < masks.length; i++) {
       let clonedEl = cloneAndStripeElement(el, masks[i]);
+      clonedEl.setAttribute('data-idx', i);
       contentEls.push(clonedEl)
-      if (i % 2 === 0) {
-        let childrenEls = clonedEl.querySelectorAll('*');
-        for (let k = 0; k < childrenEls.length; k++) {
-          let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
-          let rgb = color.toRgbString();
-          dynamics.css(childrenEls[k], {
-            color: rgb,
-            fill: rgb,
-          });
-          coloredElements.push(childrenEls[k]);
-        }
+      let childrenEls = clonedEl.querySelectorAll('h2, ul > li > a, a.more, h1, p, path');
+      for (let k = 0; k < childrenEls.length; k++) {
+        let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
+        let rgb = color.toRgbString();
+        dynamics.css(childrenEls[k], {
+          color: rgb,
+          fill: rgb,
+        });
       }
     }
     el.style.visibility = 'hidden';
@@ -202,19 +201,21 @@ function showContent() {
   let maxDelay = 0;
   for (let i = 0; i < contentEls.length; i++) {
     let el = contentEls[i];
-    let d = 50 + Math.round(Math.random() * contentEls.length) * 75;
+    let d = 50 + Math.round(Math.random() * 220);
     let transform = {
-      translateX: Math.random() * 40 - 20,
+      translateX: Math.round(Math.random() * 40 - 20),
     };
+    let more = el.getAttribute('data-idx') <= 3;
     dynamics.css(el, transform);
     dynamics.setTimeout(function() {
       dynamics.css(el, {
         display: '',
       });
     }, d);
+    maxDelay = Math.max(maxDelay, d);
     dynamics.setTimeout(function() {
       dynamics.css(el, {
-        translateX: transform.translateX / -5,
+        translateX: Math.round(transform.translateX / -5),
       });
     }, d + 100);
     dynamics.setTimeout(function() {
@@ -222,39 +223,26 @@ function showContent() {
         translateX: 0,
         translateY: 0,
       });
+      if (!more) {
+        document.body.removeChild(el);
+      }
     }, d + 150);
-    if (Math.round(Math.random() * 5) === 0) {
+    if (more) {
       dynamics.setTimeout(function() {
         dynamics.css(el, {
-          translateX: transform.translateX / -2,
+          translateX: Math.round(transform.translateX / -2),
         });
       }, d + 200);
       dynamics.setTimeout(function() {
-        dynamics.css(el, {
-          translateX: 0,
-        });
+        document.body.removeChild(el);
       }, d + 250);
     }
-    maxDelay = Math.max(maxDelay, d + 350);
-  }
-  for (let i = 0; i < coloredElements.length; i++) {
-    let d = 400 + Math.random() * 1000;
-    dynamics.setTimeout(function() {
-      dynamics.css(coloredElements[i], {
-        color: '',
-        fill: '',
-      });
-    }, d);
-    maxDelay = Math.max(maxDelay, d);
   }
   dynamics.setTimeout(function() {
-    for (let i = 0; i < contentEls.length; i++) {
-      document.body.removeChild(contentEls[i]);
-    }
     for (let i = 0; i < originalContentEls.length; i++) {
       originalContentEls[i].style.visibility = 'visible';
     }
-  }, maxDelay + 10);
+  }, maxDelay);
 }
 
 // intro!

@@ -110,7 +110,7 @@ function animateStripes() {
 
 var totalMaskIdx = 0;
 function createMasksWithStripes(width, height) {
-  var masks = [[], [], [], [], [], [], [], [], [], []];
+  var masks = [[], [], [], [], [], []];
   var maskNames = [];
   for (var i = totalMaskIdx; i < totalMaskIdx + masks.length; i++) {
     maskNames.push('clipPath' + i);
@@ -160,7 +160,9 @@ function cloneAndStripeElement(element, clipPathName) {
     position: 'absolute',
     left: box.left,
     top: box.top,
-    display: 'none'
+    display: 'none',
+    pointerEvents: 'none',
+    background: '#101214'
   });
   document.body.appendChild(el);
   el.style['-webkit-clip-path'] = 'url(#' + clipPathName + ')';
@@ -170,7 +172,6 @@ function cloneAndStripeElement(element, clipPathName) {
 
 var contentEls = [];
 var originalContentEls = document.querySelectorAll('#header-content, #content');
-var coloredElements = [];
 (function () {
   var els = originalContentEls;
   for (var j = 0; j < els.length; j++) {
@@ -179,18 +180,16 @@ var coloredElements = [];
     var masks = createMasksWithStripes(box.width, box.height);
     for (var i = 0; i < masks.length; i++) {
       var clonedEl = cloneAndStripeElement(el, masks[i]);
+      clonedEl.setAttribute('data-idx', i);
       contentEls.push(clonedEl);
-      if (i % 2 === 0) {
-        var childrenEls = clonedEl.querySelectorAll('*');
-        for (var k = 0; k < childrenEls.length; k++) {
-          var color = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
-          var rgb = color.toRgbString();
-          dynamics.css(childrenEls[k], {
-            color: rgb,
-            fill: rgb
-          });
-          coloredElements.push(childrenEls[k]);
-        }
+      var childrenEls = clonedEl.querySelectorAll('h2, ul > li > a, a.more, h1, p, path');
+      for (var k = 0; k < childrenEls.length; k++) {
+        var color = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+        var rgb = color.toRgbString();
+        dynamics.css(childrenEls[k], {
+          color: rgb,
+          fill: rgb
+        });
       }
     }
     el.style.visibility = 'hidden';
@@ -202,19 +201,21 @@ function showContent() {
 
   var _loop2 = function _loop2(i) {
     var el = contentEls[i];
-    var d = 50 + Math.round(Math.random() * contentEls.length) * 75;
+    var d = 50 + Math.round(Math.random() * 220);
     var transform = {
-      translateX: Math.random() * 40 - 20
+      translateX: Math.round(Math.random() * 40 - 20)
     };
+    var more = el.getAttribute('data-idx') <= 3;
     dynamics.css(el, transform);
     dynamics.setTimeout(function () {
       dynamics.css(el, {
         display: ''
       });
     }, d);
+    maxDelay = Math.max(maxDelay, d);
     dynamics.setTimeout(function () {
       dynamics.css(el, {
-        translateX: transform.translateX / -5
+        translateX: Math.round(transform.translateX / -5)
       });
     }, d + 100);
     dynamics.setTimeout(function () {
@@ -222,48 +223,30 @@ function showContent() {
         translateX: 0,
         translateY: 0
       });
+      if (!more) {
+        document.body.removeChild(el);
+      }
     }, d + 150);
-    if (Math.round(Math.random() * 5) === 0) {
+    if (more) {
       dynamics.setTimeout(function () {
         dynamics.css(el, {
-          translateX: transform.translateX / -2
+          translateX: Math.round(transform.translateX / -2)
         });
       }, d + 200);
       dynamics.setTimeout(function () {
-        dynamics.css(el, {
-          translateX: 0
-        });
+        document.body.removeChild(el);
       }, d + 250);
     }
-    maxDelay = Math.max(maxDelay, d + 350);
   };
 
   for (var i = 0; i < contentEls.length; i++) {
     _loop2(i);
   }
-
-  var _loop3 = function _loop3(_i) {
-    var d = 400 + Math.random() * 1000;
-    dynamics.setTimeout(function () {
-      dynamics.css(coloredElements[_i], {
-        color: '',
-        fill: ''
-      });
-    }, d);
-    maxDelay = Math.max(maxDelay, d);
-  };
-
-  for (var _i = 0; _i < coloredElements.length; _i++) {
-    _loop3(_i);
-  }
   dynamics.setTimeout(function () {
-    for (var _i2 = 0; _i2 < contentEls.length; _i2++) {
-      document.body.removeChild(contentEls[_i2]);
+    for (var _i = 0; _i < originalContentEls.length; _i++) {
+      originalContentEls[_i].style.visibility = 'visible';
     }
-    for (var _i3 = 0; _i3 < originalContentEls.length; _i3++) {
-      originalContentEls[_i3].style.visibility = 'visible';
-    }
-  }, maxDelay + 10);
+  }, maxDelay);
 }
 
 // intro!
