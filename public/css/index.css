@@ -8,6 +8,10 @@
   user-select: none;
 }
 
+*:not(a):not(a *) {
+  cursor: default;
+}
+
 html {
   height: 100%;
 }
