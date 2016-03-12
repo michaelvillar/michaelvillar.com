@@ -468,7 +468,6 @@ function showContent() {
       for (var i = 0; i < masks.length; i++) {
         var clonedEl = cloneAndStripeElement(el, masks[i]);
         var childrenEls = Array.prototype.slice.apply(clonedEl.querySelectorAll('path'));
-        clonedEl.style.cursor = "pointer";
         childrenEls.push(clonedEl);
         for (var k = 0; k < childrenEls.length; k++) {
           var _color3 = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
@@ -529,7 +528,9 @@ function showContent() {
     };
   };
 
-  for (var i = 0; i < linkEls.length; i++) {
-    linkEls[i].addEventListener('mouseover', handleMouseOver);
+  if (!('ontouchstart' in window)) {
+    for (var i = 0; i < linkEls.length; i++) {
+      linkEls[i].addEventListener('mouseover', handleMouseOver);
+    }
   }
 })();

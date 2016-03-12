@@ -455,7 +455,6 @@ function showContent() {
       for (let i = 0; i < masks.length; i++) {
         let clonedEl = cloneAndStripeElement(el, masks[i]);
         let childrenEls = Array.prototype.slice.apply(clonedEl.querySelectorAll('path'));
-        clonedEl.style.cursor = "pointer";
         childrenEls.push(clonedEl);
         for (let k = 0; k < childrenEls.length; k++) {
           let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
@@ -512,7 +511,9 @@ function showContent() {
     };
   };
 
-  for (let i = 0; i < linkEls.length; i++) {
-    linkEls[i].addEventListener('mouseover', handleMouseOver);
+  if (!('ontouchstart' in window)) {
+    for (let i = 0; i < linkEls.length; i++) {
+      linkEls[i].addEventListener('mouseover', handleMouseOver);
+    }
   }
 })();
