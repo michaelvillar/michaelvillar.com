@@ -201,7 +201,7 @@ function showContent() {
 
   var _loop2 = function _loop2(i) {
     var el = contentEls[i];
-    var d = 50 + Math.round(Math.random() * 220);
+    var d = 50 + Math.round(Math.random() * 350);
     var transform = {
       translateX: Math.round(Math.random() * 40 - 20)
     };
@@ -224,6 +224,7 @@ function showContent() {
         translateY: 0
       });
       if (!more) {
+        console.log('remove');
         document.body.removeChild(el);
       }
     }, d + 150);
@@ -232,10 +233,10 @@ function showContent() {
         dynamics.css(el, {
           translateX: Math.round(transform.translateX / -2)
         });
-      }, d + 200);
+      }, d + 300);
       dynamics.setTimeout(function () {
         document.body.removeChild(el);
-      }, d + 250);
+      }, d + 550);
     }
   };
 
