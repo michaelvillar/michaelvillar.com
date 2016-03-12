@@ -191,8 +191,8 @@ function cloneAndStripeElement(element, clipPathName) {
 
   dynamics.css(el, {
     position: 'absolute',
-    left: Math.round(box.left),
-    top: Math.round(box.top),
+    left: Math.round(box.left + window.scrollX),
+    top: Math.round(box.top + window.scrollY),
     width: Math.ceil(box.width),
     height: Math.ceil(box.height),
     display: 'none',
