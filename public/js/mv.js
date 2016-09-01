@@ -24,10 +24,12 @@ function createLine(options) {
   return el;
 }
 
+let pageEl = document.querySelector('#page');
 let introEl = document.querySelector('#intro');
 let stripesEl = document.querySelector('#stripes');
 let logoContainer = document.querySelector('#logo-container');
 let logo = logoContainer.querySelector('svg');
+let logoPath = logo.querySelector('path');
 let windowWidth = document.body.clientWidth;
 let windowHeight = document.body.clientHeight;
 
@@ -45,7 +47,7 @@ function _animateStripes(container, options={}) {
     }
     let baseWidth = Math.max(windowWidth, 1000);
     let width = Math.round(baseWidth / 10 + Math.random() * baseWidth / 10) * options.sizeRatio;
-    let height = Math.round(Math.random() * 10 + 10) * options.sizeRatio;
+    let height = Math.round(Math.random() * 10 + 2) * options.sizeRatio;
     let point;
     if (options.point) {
       point = {
@@ -184,9 +186,16 @@ function createMasksWithStripes(count, box, averageHeight=10) {
   return maskNames;
 }
 
-function cloneAndStripeElement(element, clipPathName) {
+function cloneAndStripeElement(element, clipPathName, parent) {
   let el = element.cloneNode(true);
   let box = element.getBoundingClientRect();
+  let parentBox = parent.getBoundingClientRect();
+  box = {
+    top: box.top - parentBox.top,
+    left: box.left - parentBox.left,
+    width: box.width,
+    height: box.height,
+  };
   let style = window.getComputedStyle(element);
 
   dynamics.css(el, {
@@ -203,7 +212,7 @@ function cloneAndStripeElement(element, clipPathName) {
     color: style.color,
     textDecoration: style.textDecoration,
   });
-  document.body.appendChild(el);
+  parent.appendChild(el);
   el.style['-webkit-clip-path'] = `url(/#${clipPathName})`;
   el.style['clip-path'] = `url(/#${clipPathName})`;
 
@@ -214,12 +223,13 @@ let contentEls = [];
 let originalContentEls = document.querySelectorAll('#header-content, #content');
 (function() {
   let els = originalContentEls;
+  let pageBox = pageEl.getBoundingClientRect();
   for (let j = 0; j < els.length; j++) {
     let el = els[j];
     let box = el.getBoundingClientRect();
     let masks = createMasksWithStripes(6, box);
     for (let i = 0; i < masks.length; i++) {
-      let clonedEl = cloneAndStripeElement(el, masks[i]);
+      let clonedEl = cloneAndStripeElement(el, masks[i], pageEl);
       clonedEl.setAttribute('data-idx', i);
       contentEls.push(clonedEl)
       let childrenEls = clonedEl.querySelectorAll('h2, ul > li > a, a.more, h1, p, path');
@@ -263,7 +273,7 @@ function showContent() {
         translateY: 0,
       });
       if (!more) {
-        document.body.removeChild(el);
+        el.parentNode.removeChild(el);
       }
     }, d + 150);
     if (more) {
@@ -273,7 +283,7 @@ function showContent() {
         });
       }, d + 300);
       dynamics.setTimeout(function() {
-        document.body.removeChild(el);
+        el.parentNode.removeChild(el);
       }, d + 550);
     }
   }
@@ -293,6 +303,18 @@ function showContent() {
     count: 100,
   });
 
+  dynamics.css(pageEl, {
+    scale: 0.95,
+  });
+  dynamics.animate(pageEl, {
+    scale: 1,
+  }, {
+    type: dynamics.easeInOut,
+    friction: 500,
+    duration: 4000,
+  });
+
+
   dynamics.css(logo, {
     scale: 1,
   })
@@ -301,6 +323,21 @@ function showContent() {
   }, {
     duration: 1500,
     type: dynamics.easeOut,
+  });
+
+  let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
+  dynamics.animate(logoPath, {
+    fill: color.toRgbString(),
+  }, {
+    duration: 700,
+  });
+
+  color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
+  dynamics.animate(logoPath, {
+    fill: color.toRgbString(),
+  }, {
+    duration: 700,
+    delay: 700,
   });
 
   function animateLogo() {
@@ -366,7 +403,6 @@ function showContent() {
   }, 3000);
 })();
 
-
 // page
 (function() {
   let pageStripesEl = document.querySelector('#page-stripes');
@@ -380,7 +416,7 @@ function showContent() {
     let clonedEls = [];
 
     for (let i = 0; i < masks.length; i++) {
-      let clonedEl = cloneAndStripeElement(el, masks[i]);
+      let clonedEl = cloneAndStripeElement(el, masks[i], document.body);
       let path = clonedEl.querySelector('path');
       let color = tinycolor(`hsl(${Math.round(Math.random() * 360)}, 80%, 65%)`);
       dynamics.css(path, {
@@ -426,6 +462,7 @@ function showContent() {
   };
 
   dynamics.setTimeout(logoAnimationLoop, 4000);
+  document.querySelector('#header-logo').addEventListener('mouseover', animateCrazyLogo);
 
   function handleMouseOver(e) {
     let el = e.target;
@@ -454,7 +491,7 @@ function showContent() {
       let clonedEls = [];
 
       for (let i = 0; i < masks.length; i++) {
-        let clonedEl = cloneAndStripeElement(el, masks[i]);
+        let clonedEl = cloneAndStripeElement(el, masks[i], document.body);
         let childrenEls = Array.prototype.slice.apply(clonedEl.querySelectorAll('path'));
         childrenEls.push(clonedEl);
         for (let k = 0; k < childrenEls.length; k++) {

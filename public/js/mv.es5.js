@@ -20,10 +20,12 @@ function createLine(options) {
   return el;
 }
 
+var pageEl = document.querySelector('#page');
 var introEl = document.querySelector('#intro');
 var stripesEl = document.querySelector('#stripes');
 var logoContainer = document.querySelector('#logo-container');
 var logo = logoContainer.querySelector('svg');
+var logoPath = logo.querySelector('path');
 var windowWidth = document.body.clientWidth;
 var windowHeight = document.body.clientHeight;
 
@@ -36,7 +38,7 @@ function _animateStripes(container) {
   var stripes = [];
 
   var _loop = function _loop(i) {
-    var color = undefined;
+    var color = void 0;
     if (options.color) {
       color = options.color;
     } else {
@@ -44,8 +46,8 @@ function _animateStripes(container) {
     }
     var baseWidth = Math.max(windowWidth, 1000);
     var width = Math.round(baseWidth / 10 + Math.random() * baseWidth / 10) * options.sizeRatio;
-    var height = Math.round(Math.random() * 10 + 10) * options.sizeRatio;
-    var point = undefined;
+    var height = Math.round(Math.random() * 10 + 2) * options.sizeRatio;
+    var point = void 0;
     if (options.point) {
       point = {
         x: Math.round(options.point.x - width / 2 + Math.random() * 200 - 100),
@@ -189,9 +191,16 @@ function createMasksWithStripes(count, box) {
   return maskNames;
 }
 
-function cloneAndStripeElement(element, clipPathName) {
+function cloneAndStripeElement(element, clipPathName, parent) {
   var el = element.cloneNode(true);
   var box = element.getBoundingClientRect();
+  var parentBox = parent.getBoundingClientRect();
+  box = {
+    top: box.top - parentBox.top,
+    left: box.left - parentBox.left,
+    width: box.width,
+    height: box.height
+  };
   var style = window.getComputedStyle(element);
 
   dynamics.css(el, {
@@ -208,7 +217,7 @@ function cloneAndStripeElement(element, clipPathName) {
     color: style.color,
     textDecoration: style.textDecoration
   });
-  document.body.appendChild(el);
+  parent.appendChild(el);
   el.style['-webkit-clip-path'] = 'url(/#' + clipPathName + ')';
   el.style['clip-path'] = 'url(/#' + clipPathName + ')';
 
@@ -219,12 +228,13 @@ var contentEls = [];
 var originalContentEls = document.querySelectorAll('#header-content, #content');
 (function () {
   var els = originalContentEls;
+  var pageBox = pageEl.getBoundingClientRect();
   for (var j = 0; j < els.length; j++) {
     var el = els[j];
     var box = el.getBoundingClientRect();
     var masks = createMasksWithStripes(6, box);
     for (var i = 0; i < masks.length; i++) {
-      var clonedEl = cloneAndStripeElement(el, masks[i]);
+      var clonedEl = cloneAndStripeElement(el, masks[i], pageEl);
       clonedEl.setAttribute('data-idx', i);
       contentEls.push(clonedEl);
       var childrenEls = clonedEl.querySelectorAll('h2, ul > li > a, a.more, h1, p, path');
@@ -269,7 +279,7 @@ function showContent() {
         translateY: 0
       });
       if (!more) {
-        document.body.removeChild(el);
+        el.parentNode.removeChild(el);
       }
     }, d + 150);
     if (more) {
@@ -279,7 +289,7 @@ function showContent() {
         });
       }, d + 300);
       dynamics.setTimeout(function () {
-        document.body.removeChild(el);
+        el.parentNode.removeChild(el);
       }, d + 550);
     }
   };
@@ -303,6 +313,17 @@ function showContent() {
     count: 100
   });
 
+  dynamics.css(pageEl, {
+    scale: 0.95
+  });
+  dynamics.animate(pageEl, {
+    scale: 1
+  }, {
+    type: dynamics.easeInOut,
+    friction: 500,
+    duration: 4000
+  });
+
   dynamics.css(logo, {
     scale: 1
   });
@@ -311,6 +332,21 @@ function showContent() {
   }, {
     duration: 1500,
     type: dynamics.easeOut
+  });
+
+  var color = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+  dynamics.animate(logoPath, {
+    fill: color.toRgbString()
+  }, {
+    duration: 700
+  });
+
+  color = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
+  dynamics.animate(logoPath, {
+    fill: color.toRgbString()
+  }, {
+    duration: 700,
+    delay: 700
   });
 
   function animateLogo() {
@@ -389,7 +425,7 @@ function showContent() {
     var clonedEls = [];
 
     for (var i = 0; i < masks.length; i++) {
-      var clonedEl = cloneAndStripeElement(el, masks[i]);
+      var clonedEl = cloneAndStripeElement(el, masks[i], document.body);
       var path = clonedEl.querySelector('path');
       var _color2 = tinycolor('hsl(' + Math.round(Math.random() * 360) + ', 80%, 65%)');
       dynamics.css(path, {
@@ -439,6 +475,7 @@ function showContent() {
   };
 
   dynamics.setTimeout(logoAnimationLoop, 4000);
+  document.querySelector('#header-logo').addEventListener('mouseover', animateCrazyLogo);
 
   function handleMouseOver(e) {
     var el = e.target;
@@ -467,7 +504,7 @@ function showContent() {
       var clonedEls = [];
 
       for (var i = 0; i < masks.length; i++) {
-        var clonedEl = cloneAndStripeElement(el, masks[i]);
+        var clonedEl = cloneAndStripeElement(el, masks[i], document.body);
         var childrenEls = Array.prototype.slice.apply(clonedEl.querySelectorAll('path'));
         childrenEls.push(clonedEl);
         for (var k = 0; k < childrenEls.length; k++) {
