@@ -29,8 +29,15 @@ body {
 
 h1, h2 {
   font-weight: normal;
-  font-size: 25px;
   color: white;
+}
+
+h1 {
+  font-size: 25px;
+}
+
+h2 {
+  font-size: 18px;
 }
 
 .full-size {
@@ -109,10 +116,6 @@ header {
 
 section {
   margin-bottom: 30px;
-}
-
-section h2 {
-  height: 30px;
 }
 
 section ul {
