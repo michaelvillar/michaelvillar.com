@@ -1,3 +1,6 @@
-*.sketch
-*.aep
-
+.DS_Store
+node_modules/
+npm-debug.log.*
+dump.rdb
+yarn-error.log
+.vscode/launch.json
