@@ -405,7 +405,6 @@ function showContent() {
 
 // page
 (function() {
-  let pageStripesEl = document.querySelector('#page-stripes');
   let linkEls = document.querySelectorAll('a');
 
   function animateCrazyLogo() {
